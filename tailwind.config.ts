@@ -1,9 +1,8 @@
 import type { Config } from "tailwindcss";
 
 /**
- * "Technical Precision" 디자인 시스템
- * — 0px 직각 셰이프, Dark Topaz(#006D77) 프라이머리, 플랫/보더 기반 뎁스.
- * 색상 토큰은 globals.css의 CSS 변수(라이트/다크)를 참조한다.
+ * Sensorial Minimalism — 블랙&화이트 뉴트럴 스케일만 사용.
+ * 장식 요소 없이 타이포그래피 비율과 여백으로만 위계를 만든다.
  */
 const config: Config = {
   darkMode: "class",
@@ -13,49 +12,8 @@ const config: Config = {
     "./content/**/*.mdx",
   ],
   theme: {
-    // 셰이프 언어: 전면 Sharp(0px) — 모든 rounded-* 유틸을 0으로 고정
-    borderRadius: {
-      none: "0",
-      sm: "0",
-      DEFAULT: "0",
-      md: "0",
-      lg: "0",
-      xl: "0",
-      "2xl": "0",
-      "3xl": "0",
-      full: "0",
-    },
     extend: {
-      colors: {
-        surface: "var(--surface)",
-        "surface-dim": "var(--surface-dim)",
-        "surface-container-lowest": "var(--surface-container-lowest)",
-        "surface-container-low": "var(--surface-container-low)",
-        "surface-container": "var(--surface-container)",
-        "surface-container-high": "var(--surface-container-high)",
-        "surface-container-highest": "var(--surface-container-highest)",
-        "on-surface": "var(--on-surface)",
-        "on-surface-variant": "var(--on-surface-variant)",
-        outline: "var(--outline)",
-        "outline-variant": "var(--outline-variant)",
-        primary: "var(--primary)",
-        "on-primary": "var(--on-primary)",
-        "primary-container": "var(--primary-container)",
-        "on-primary-container": "var(--on-primary-container)",
-        "primary-fixed": "#cfe5ff",
-        "primary-fixed-dim": "#4da3ff",
-        "on-primary-fixed": "#08213d",
-        secondary: "var(--secondary)",
-        "secondary-fixed": "#ebf5ff",
-        "on-secondary-fixed": "#08213d",
-        "on-secondary-fixed-variant": "#007aff",
-        tertiary: "var(--tertiary)",
-        "inverse-surface": "var(--inverse-surface)",
-        "inverse-on-surface": "var(--inverse-on-surface)",
-        error: "#ba1a1a",
-      },
       fontFamily: {
-        // 한글 타이포: Pretendard 전면 적용 / 라벨·코드: Geist
         sans: [
           "Pretendard Variable",
           "Pretendard",
@@ -66,120 +24,23 @@ const config: Config = {
           "Noto Sans KR",
           "sans-serif",
         ],
-        headline: [
-          "Pretendard Variable",
-          "Pretendard",
-          "-apple-system",
-          "system-ui",
-          "Apple SD Gothic Neo",
-          "sans-serif",
+        serif: [
+          "Georgia",
+          "Times New Roman",
+          "Noto Serif KR",
+          "serif",
         ],
-        label: ["Geist", "Pretendard Variable", "Pretendard", "sans-serif"],
-        code: ["Geist Mono", "Geist", "monospace"],
-      },
-      spacing: {
-        // Apple 참고 — 촘촘한 8px 기반 리듬 스케일 (요소 간 여백 축소)
-        xxs: "4px",
-        xs: "8px",
-        sm: "12px",
-        md: "17px",
-        lg: "24px",
-        xl: "32px",
-        xxl: "48px",
-        section: "80px",
       },
       maxWidth: {
-        "container-max": "1120px",
-        "content-max": "720px",
+        article: "680px",
+        shell: "1200px",
       },
-      fontSize: {
-        display: [
-          "34px",
-          { lineHeight: "1.1", letterSpacing: "-0.028em", fontWeight: "800" },
-        ],
-        "headline-lg": [
-          "23px",
-          { lineHeight: "1.18", letterSpacing: "-0.022em", fontWeight: "700" },
-        ],
-        "headline-md": [
-          "17px",
-          { lineHeight: "1.3", letterSpacing: "-0.015em", fontWeight: "600" },
-        ],
-        "body-lg": ["15px", { lineHeight: "1.75", fontWeight: "400" }],
-        "body-md": ["13.5px", { lineHeight: "1.65", fontWeight: "400" }],
-        "label-sm": [
-          "11px",
-          { lineHeight: "1.2", letterSpacing: "0.05em", fontWeight: "500" },
-        ],
+      transitionTimingFunction: {
+        sensorial: "cubic-bezier(0.22, 1, 0.36, 1)",
       },
-      typography: () => ({
-        DEFAULT: {
-          css: {
-            maxWidth: "none",
-            fontFamily: "'Pretendard Variable', Pretendard, sans-serif",
-            fontSize: "14.5px",
-            lineHeight: "1.8",
-            "--tw-prose-body": "var(--on-surface)",
-            "--tw-prose-headings": "var(--on-surface)",
-            "--tw-prose-bold": "var(--on-surface)",
-            "--tw-prose-links": "var(--primary)",
-            "--tw-prose-quotes": "var(--on-surface-variant)",
-            "--tw-prose-quote-borders": "var(--primary-container)",
-            "--tw-prose-counters": "var(--primary)",
-            "--tw-prose-hr": "var(--outline-variant)",
-            "--tw-prose-th-borders": "var(--outline-variant)",
-            "--tw-prose-td-borders": "var(--outline-variant)",
-            "h2, h3, h4": {
-              fontFamily: "'Pretendard Variable', Pretendard, sans-serif",
-              letterSpacing: "-0.02em",
-            },
-            h2: { fontSize: "1.35em" },
-            h3: { fontSize: "1.15em" },
-            // 리스트: 프라이머리 틸 사각 불릿
-            ul: { listStyleType: "square" },
-            "ul > li::marker": { color: "var(--primary-container)" },
-            blockquote: {
-              fontStyle: "normal",
-              fontWeight: "500",
-              borderLeftWidth: "2px",
-            },
-            "blockquote p:first-of-type::before": { content: "none" },
-            "blockquote p:last-of-type::after": { content: "none" },
-            "code::before": { content: "none" },
-            "code::after": { content: "none" },
-            code: {
-              fontFamily: "'Geist Mono', Geist, monospace",
-              fontSize: "13px",
-              backgroundColor: "var(--surface-container-low)",
-              border: "1px solid var(--outline-variant)",
-              borderRadius: "0",
-              padding: "0.1rem 0.35rem",
-              fontWeight: "400",
-            },
-            // 코드 블록: 좌측 프라이머리 틸 액센트 바 + 플랫 서피스
-            pre: {
-              fontFamily: "'Geist Mono', Geist, monospace",
-              fontSize: "13px",
-              lineHeight: "1.6",
-              backgroundColor: "var(--surface-container-low)",
-              color: "var(--on-surface)",
-              border: "1px solid var(--outline-variant)",
-              borderLeft: "3px solid var(--primary-container)",
-              borderRadius: "0",
-            },
-            "pre code": {
-              backgroundColor: "transparent",
-              border: "none",
-              padding: "0",
-            },
-            img: { borderRadius: "0" },
-            a: { textUnderlineOffset: "4px" },
-          },
-        },
-      }),
     },
   },
-  plugins: [require("@tailwindcss/typography")],
+  plugins: [],
 };
 
 export default config;

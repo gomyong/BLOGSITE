@@ -3,86 +3,95 @@
 @tailwind utilities;
 
 /*
- * 색상 시스템 — 블루 액센트 기반
- *  key(primary): #007AFF · sub(container): #EBF5FF · bg(surface): #F8FAFC · tertiary(ink): #1A1C1E
+ * Sensorial Minimalism — 블랙&화이트.
+ * 색은 뉴트럴 스케일만 사용하고, 위계는 타이포그래피와 여백으로 만든다.
  */
-:root {
-  --surface: #f8fafc;
-  --surface-dim: #e2e8f0;
-  --surface-container-lowest: #ffffff;
-  --surface-container-low: #f1f5f9;
-  --surface-container: #ebf5ff;
-  --surface-container-high: #e2eefc;
-  --surface-container-highest: #d6e6fa;
-  --on-surface: #1a1c1e;
-  --on-surface-variant: #52606d;
-  --outline: #8a97a5;
-  --outline-variant: #e2e8f0;
-  --primary: #007aff;
-  --on-primary: #ffffff;
-  --primary-container: #007aff;
-  --on-primary-container: #ebf5ff;
-  --secondary: #007aff;
-  --tertiary: #1a1c1e;
-  --inverse-surface: #1a1c1e;
-  --inverse-on-surface: #f8fafc;
-}
-
-/* 다크 모드 — 동일 구조의 톤 반전 매핑 (링크·액센트는 밝은 블루) */
-.dark {
-  --surface: #0f1216;
-  --surface-dim: #0a0d11;
-  --surface-container-lowest: #0b0e12;
-  --surface-container-low: #161a20;
-  --surface-container: #1b2028;
-  --surface-container-high: #222834;
-  --surface-container-highest: #2a3140;
-  --on-surface: #e6eaf0;
-  --on-surface-variant: #a6b0bd;
-  --outline: #8a97a5;
-  --outline-variant: #333b45;
-  --primary: #4da3ff;
-  --on-primary: #08213d;
-  --primary-container: #007aff;
-  --on-primary-container: #ebf5ff;
-  --secondary: #4da3ff;
-  --tertiary: #1a1c1e;
-  --inverse-surface: #e6eaf0;
-  --inverse-on-surface: #1a1c1e;
-}
 
 @layer base {
   html {
     scroll-behavior: smooth;
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
+    -webkit-text-size-adjust: 100%;
   }
 
   body {
-    @apply bg-surface text-on-surface transition-colors duration-300;
-    word-break: keep-all;
+    @apply bg-white text-neutral-900 antialiased dark:bg-neutral-950 dark:text-neutral-50;
+    font-feature-settings: "ss05";
   }
 
   ::selection {
-    @apply bg-primary-container text-white;
+    @apply bg-neutral-900 text-white dark:bg-neutral-50 dark:text-neutral-950;
   }
 }
 
 @layer components {
-  /* 사각 챕 라벨 — Geist, 대문자, 서브 컬러(#EBF5FF) 배경 + 키 컬러 텍스트 */
-  .chip {
-    @apply inline-flex items-center bg-[#ebf5ff] px-xs py-[3px] font-label text-label-sm uppercase text-primary dark:bg-[rgba(0,122,255,0.16)] dark:text-primary;
+  /* PRD 3.2 — 본문 타이포그래피 시스템 */
+  .article-body {
+    @apply text-[17px] md:text-[18px] leading-[1.8] tracking-normal font-normal text-neutral-800 dark:text-neutral-200;
   }
-}
 
-@layer utilities {
-  .scrollbar-thin::-webkit-scrollbar {
-    width: 4px;
+  .article-body h2 {
+    @apply mt-16 mb-6 text-2xl md:text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50;
   }
-  .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: var(--outline-variant);
+
+  .article-body h3 {
+    @apply mt-12 mb-4 text-xl md:text-2xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-50;
   }
-  .scrollbar-thin::-webkit-scrollbar-track {
-    background: transparent;
+
+  .article-body p {
+    @apply my-7;
+  }
+
+  /* 인용구: 왼쪽 세로선 없이 세리프 이탈릭 + 여백 대비만으로 구분 (PRD 3.2) */
+  .article-body blockquote {
+    @apply my-12 pl-4 text-xl font-serif italic leading-[1.7] text-neutral-600 dark:text-neutral-400;
+  }
+
+  .article-body blockquote p {
+    @apply my-0;
+  }
+
+  .article-body a {
+    @apply underline underline-offset-4 decoration-neutral-300 hover:decoration-neutral-900 dark:decoration-neutral-600 dark:hover:decoration-neutral-100 transition-colors;
+  }
+
+  .article-body strong {
+    @apply font-semibold text-neutral-900 dark:text-neutral-50;
+  }
+
+  .article-body ul,
+  .article-body ol {
+    @apply my-7 pl-6 space-y-2;
+  }
+
+  .article-body ul {
+    @apply list-disc marker:text-neutral-400;
+  }
+
+  .article-body ol {
+    @apply list-decimal marker:text-neutral-400;
+  }
+
+  .article-body hr {
+    @apply my-16 mx-auto w-12 border-neutral-200 dark:border-neutral-800;
+  }
+
+  .article-body code {
+    @apply rounded bg-neutral-100 px-1.5 py-0.5 text-[0.85em] font-mono text-neutral-800 dark:bg-neutral-900 dark:text-neutral-200;
+  }
+
+  .article-body pre {
+    @apply my-10 overflow-x-auto rounded-lg bg-neutral-950 p-6 text-[14px] leading-relaxed text-neutral-100 dark:bg-neutral-900;
+  }
+
+  .article-body pre code {
+    @apply bg-transparent p-0 text-inherit;
+  }
+
+  .article-body img {
+    @apply my-10 w-full rounded-lg;
+  }
+
+  .article-body figcaption {
+    @apply -mt-6 mb-10 text-center text-sm text-neutral-400;
   }
 }

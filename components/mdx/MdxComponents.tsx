@@ -1,59 +1,56 @@
-import Image from "next/image";
-import Link from "next/link";
 import type { MDXComponents } from "mdx/types";
+import RevealBlock from "./RevealBlock";
 
-/** 외부 링크는 새 탭, 내부 링크는 next/link로 처리 */
-function CustomLink(props: React.AnchorHTMLAttributes<HTMLAnchorElement>) {
-  const href = props.href ?? "";
-  const className =
-    "font-medium text-primary underline decoration-2 underline-offset-4 hover:text-primary-container";
-  if (href.startsWith("/")) {
-    return <Link href={href} {...props} className={className} />;
-  }
-  return (
-    <a
-      {...props}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={className}
-    />
-  );
-}
-
-/** 본문 이미지 — next/image 최적화 + alt 텍스트를 캡션으로 렌더링 */
-function CustomImage({ src, alt }: { src?: string; alt?: string }) {
-  if (!src) return null;
-  return (
-    <figure className="my-8">
-      <div className="relative aspect-video w-full overflow-hidden border border-outline-variant">
-        <Image
-          src={src}
-          alt={alt ?? ""}
-          fill
-          sizes="(max-width: 720px) 100vw, 720px"
-          className="object-cover"
-        />
-      </div>
-      {alt && (
-        <figcaption className="mt-3 text-center font-label text-[13px] text-on-surface-variant">
-          {alt}
-        </figcaption>
-      )}
-    </figure>
-  );
-}
-
-function Blockquote(props: React.BlockquoteHTMLAttributes<HTMLQuoteElement>) {
-  return (
-    <blockquote
-      {...props}
-      className="my-8 border-l-2 border-primary-container bg-surface-container-low py-sm pl-md pr-sm text-[15px] font-medium leading-relaxed text-on-surface-variant"
-    />
-  );
-}
-
+/**
+ * PRD 3.2 — 본문 블록 단위 Scroll Reveal.
+ * 문단·헤딩·인용구·이미지가 스크롤 진입 시 페이드인 + 블러 해제된다.
+ * 세부 타이포그래피는 globals.css의 .article-body 규칙이 담당한다.
+ */
 export const mdxComponents: MDXComponents = {
-  a: CustomLink,
-  img: CustomImage as MDXComponents["img"],
-  blockquote: Blockquote,
+  p: ({ children }) => (
+    <RevealBlock>
+      <p>{children}</p>
+    </RevealBlock>
+  ),
+  h2: ({ children }) => (
+    <RevealBlock>
+      <h2>{children}</h2>
+    </RevealBlock>
+  ),
+  h3: ({ children }) => (
+    <RevealBlock>
+      <h3>{children}</h3>
+    </RevealBlock>
+  ),
+  blockquote: ({ children }) => (
+    <RevealBlock>
+      <blockquote>{children}</blockquote>
+    </RevealBlock>
+  ),
+  ul: ({ children }) => (
+    <RevealBlock>
+      <ul>{children}</ul>
+    </RevealBlock>
+  ),
+  ol: ({ children }) => (
+    <RevealBlock>
+      <ol>{children}</ol>
+    </RevealBlock>
+  ),
+  pre: ({ children }) => (
+    <RevealBlock>
+      <pre>{children}</pre>
+    </RevealBlock>
+  ),
+  img: (props) => (
+    <RevealBlock>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img {...props} alt={props.alt ?? ""} loading="lazy" />
+    </RevealBlock>
+  ),
+  hr: () => (
+    <RevealBlock>
+      <hr />
+    </RevealBlock>
+  ),
 };

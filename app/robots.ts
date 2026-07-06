@@ -1,13 +1,8 @@
 import type { MetadataRoute } from "next";
-import { siteConfig } from "@/lib/site";
 
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: {
-      userAgent: "*",
-      allow: "/",
-      disallow: ["/api/", "/studio"],
-    },
-    sitemap: `${siteConfig.url}/sitemap.xml`,
+    rules: { userAgent: "*", allow: "/" },
+    sitemap: "https://sensorial.blog/sitemap.xml",
   };
 }

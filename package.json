@@ -1,8 +1,8 @@
 {
-  "name": "blogsite",
+  "name": "sensorial-blog",
   "version": "1.0.0",
   "private": true,
-  "description": "Tech & Brand Insight Media Platform",
+  "description": "Sensorial Text & Tech Minimal Blog",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -11,15 +11,14 @@
   },
   "dependencies": {
     "date-fns": "^4.1.0",
+    "framer-motion": "^12.19.2",
     "gray-matter": "^4.0.3",
-    "lucide-react": "^0.525.0",
     "next": "^15.3.4",
     "next-mdx-remote": "^6.0.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
-    "@tailwindcss/typography": "^0.5.16",
     "@types/mdx": "^2.0.14",
     "@types/node": "^22.15.0",
     "@types/react": "^19.1.0",
