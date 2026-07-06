@@ -1,119 +1,73 @@
 # 블로그 글 작성 가이드
 
-이 사이트는 **DB나 관리자(CMS) 화면이 없습니다.** 모든 글은 `content/` 폴더 안의
-**MDX 파일**로 존재하고, 파일을 추가하면 곧 한 편의 글이 됩니다. 작성 흐름은 이렇습니다.
-
-```
-글 쓰기 = 새 .mdx 파일 만들기 → 맨 위에 정보(frontmatter) 채우기 → 본문 작성 → 저장/푸시
-```
-
-푸시(git push)하면 Vercel이 자동으로 다시 빌드해 몇십 초 뒤 실제 사이트에 반영됩니다.
-로컬에서 미리 보려면 `npm run dev` 후 `http://localhost:3000`.
+글을 쓰는 방법은 두 가지입니다. **①스튜디오(추천)** 또는 **②파일 직접 작성**.
 
 ---
 
-## 1. 심층 아티클(Insights) 쓰기
+## 1. 스튜디오에서 쓰기 (추천 — 브런치/미디엄처럼)
 
-깊이 있는 분석 글입니다. `content/insights/` 안에 새 파일을 만듭니다.
+사이트에 내장된 관리 화면입니다. 파일이나 git을 몰라도 됩니다.
 
-- **파일 이름이 곧 주소(URL)입니다.** 영문 소문자와 하이픈(-)만 사용하세요.
-  - `content/insights/apple-vision-pro.mdx` → 주소는 `/insight/apple-vision-pro`
-- 한글 파일명은 피하세요(주소가 깨집니다).
+### 첫 설정 (한 번만)
 
-파일 맨 위 `---` 사이 블록이 **frontmatter**(글 정보)이고, 그 아래가 본문입니다.
+Vercel 대시보드 → Settings → Environment Variables에 3개를 추가하고 재배포:
 
-```mdx
+| 변수 | 값 | 용도 |
+| --- | --- | --- |
+| `ADMIN_PASSWORD` | 원하는 비밀번호 | 스튜디오 로그인 |
+| `GITHUB_TOKEN` | GitHub fine-grained PAT | 발행(저장소 커밋) 권한 |
+| `GITHUB_REPO` | `gomyong/BLOGSITE` | 발행 대상 저장소 |
+
+> **GITHUB_TOKEN 만들기**: GitHub → Settings → Developer settings →
+> Fine-grained tokens → Generate new token → Repository access에서
+> `BLOGSITE`만 선택 → Permissions에서 **Contents: Read and write** 부여.
+
+### 사용법
+
+1. `사이트주소/studio` 접속 → 비밀번호 입력
+2. **새 아티클** 또는 **새 브리프** 클릭
+3. 제목/본문을 그냥 입력 (마크다운 지원: `## 소제목`, `**굵게**`, `> 인용`, `- 리스트`)
+4. 상단 **설정**에서 카테고리·태그·요약·대표글(Featured) 지정, **커버 이미지 추가**로 업로드
+5. **발행** 클릭 → 저장소에 자동 커밋 → **1~2분 뒤 사이트에 반영**
+6. **초안 저장**을 누르면 사이트에 노출되지 않는 초안으로 보관됩니다
+
+대시보드에서 기존 글 수정(연필)·삭제(휴지통)도 가능합니다.
+
 ---
-title: "글 제목이 여기에 들어갑니다"
-description: "목록·검색결과·SNS 공유에 쓰이는 한 줄 요약 (한두 문장)"
+
+## 2. 파일로 직접 쓰기 (개발자용)
+
+`content/insights/` 또는 `content/briefs/`에 `.mdx` 파일을 만들어 push해도 됩니다.
+파일명이 곧 URL입니다 (`apple-vision.mdx` → `/insight/apple-vision`).
+
+### Insights frontmatter
+
+```yaml
+---
+title: "글 제목"
+description: "한 줄 요약 (SEO)"
 date: "2026-07-06"
 category: "Brand"
-tags: ["Apple", "UX", "브랜드전략"]
-coverImage: "/images/insights/apple-vision.svg"
-featured: true
-author: "김에디터"
+tags: ["Apple", "UX"]
+coverImage: "/images/insights/cover.svg"
+featured: true      # 메인 상단 대표 영역 노출 (최신 2개)
+author: "에디터"
+# draft: true       # 초안 — 사이트에 노출 안 됨
 ---
 
-여기서부터 본문입니다. 그냥 글을 쓰면 됩니다.
-
-## 소제목은 ## 두 개로
-
-문단은 빈 줄로 구분합니다.
-
-> 인용하고 싶은 문장은 이렇게 > 로 시작하면 파란 강조 바가 붙습니다.
-
-**굵게**, *기울임*, [링크 텍스트](https://example.com) 도 됩니다.
+본문...
 ```
 
-### 각 항목의 의미
+### Briefs frontmatter (제목 없음)
 
-| 항목 | 필수 | 설명 |
-| --- | --- | --- |
-| `title` | ✅ | 글 제목. 목록·상세·검색결과 제목으로 쓰임 |
-| `description` | ✅ | 한 줄 요약. 비워도 본문 앞부분이 자동으로 들어가지만 직접 쓰는 걸 권장 |
-| `date` | ✅ | `"2026-07-06"` 형식. 이 날짜 기준으로 **최신순 정렬** |
-| `category` | ✅ | 한 단어. 카드/상세의 파란 라벨로 표시 (예: Brand, Tech, Business) |
-| `tags` | | 대괄호 안에 여러 개. `#태그` 형태로 하단에 노출 |
-| `coverImage` | | 대표 이미지 경로. 없으면 회색 배경으로 표시 |
-| `featured` | | `true`면 **메인 상단 대표 영역**에 크게 노출 (아래 설명) |
-| `author` | | 글쓴이 이름. 비우면 "에디터" |
-
-### featured(대표글) 규칙
-
-- 메인 페이지 최상단은 `featured: true`인 글을 보여줍니다. 가장 최근 것 **2개**만 큰 카드로 올라갑니다.
-- 나머지(그리고 `featured`를 안 쓴 글)는 아래 "최신 발간물" 그리드에 자동으로 들어갑니다.
-- 즉, 새 글을 대표로 띄우고 싶으면 `featured: true`, 평소 글이면 생략하거나 `false`.
-
+```yaml
 ---
-
-## 2. 단신(Briefs) 쓰기
-
-짧게 소식을 전하는 트위터/스레드 형태의 글입니다. `content/briefs/` 안에 만듭니다.
-
-- **제목이 없습니다.** 그냥 본문만 씁니다(본문 앞 100자가 요약으로 자동 사용됨).
-- 파일 이름은 날짜로 시작하는 걸 추천합니다: `2026-07-06-openai-news.mdx`
-
-```mdx
+date: "2026-07-06T14:30:00+09:00"   # 시간까지 — "2시간 전"으로 표시
+tags: ["Tech News"]
+link: "https://원문-링크"             # 선택
 ---
-date: "2026-07-06T09:30:00+09:00"
-tags: ["Tech News", "AI"]
-link: "https://example.com/원문-링크"
----
-여기에 하고 싶은 말을 짧게 씁니다. 제목 없이 본문만 있으면 됩니다.
+단신 본문. 첫 100자가 요약으로 자동 사용됩니다.
 ```
 
-| 항목 | 필수 | 설명 |
-| --- | --- | --- |
-| `date` | ✅ | **시간까지** 넣으세요. `"2026-07-06T09:30:00+09:00"` (끝 `+09:00`은 한국시간). "2시간 전"처럼 상대시간으로 표시됨 |
-| `tags` | | 파란 라벨로 표시 |
-| `link` | | 원문 출처가 있으면 넣기. "원문 보기" 링크가 생김 |
-
-단신은 메인 페이지에는 안 보이고, 상단 메뉴 **Briefs**(`/briefs`) 페이지에 최신순으로 모입니다.
-
----
-
-## 3. 이미지 넣기
-
-1. 이미지 파일을 `public/images/insights/` 폴더에 넣습니다. (예: `my-photo.jpg`)
-2. 대표 이미지로 쓰려면 frontmatter에: `coverImage: "/images/insights/my-photo.jpg"`
-   - 경로는 `public`을 뺀 `/images/...`부터 씁니다.
-3. 본문 중간에 이미지를 넣으려면:
-   ```mdx
-   ![사진 아래 들어갈 설명 캡션](/images/insights/my-photo.jpg)
-   ```
-   대괄호 안 글이 사진 밑 캡션으로 나옵니다.
-
-> 팁: 이미지는 가로로 넓은 것(16:9 정도)이 카드/커버에 가장 잘 맞습니다.
-> 최적화(WebP 변환·지연 로딩)는 자동으로 처리됩니다.
-
----
-
-## 4. 발행 순서 요약
-
-1. `content/insights/` 또는 `content/briefs/`에 `.mdx` 파일 생성
-2. 위 예시대로 frontmatter + 본문 작성
-3. (선택) 로컬 확인: `npm run dev` → `localhost:3000`
-4. 저장 후 git commit & push → Vercel이 자동 배포
-
-날짜·정렬·목록·SEO(검색 최적화)·사이트맵은 **전부 자동**입니다.
-글쓴이는 파일 하나만 신경 쓰면 됩니다.
+이미지는 `public/images/` 아래에 두고 `/images/...` 경로로 참조합니다.
+정렬·목록·SEO·사이트맵은 전부 자동입니다.

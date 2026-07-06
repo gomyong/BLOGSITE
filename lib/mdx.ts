@@ -43,9 +43,16 @@ function estimateReadingTime(content: string) {
   return Math.max(1, Math.round(chars / 500));
 }
 
-/** 모든 Insights(심층 아티클)를 최신순으로 반환 */
+/** 모든 Insights(심층 아티클)를 최신순으로 반환 — draft: true는 제외 */
 export function getInsights(): Insight[] {
   return readMdxFiles("insights")
+    .filter((file) => {
+      const raw = fs.readFileSync(
+        path.join(CONTENT_DIR, "insights", file),
+        "utf-8"
+      );
+      return !matter(raw).data.draft;
+    })
     .map((file) => {
       const slug = file.replace(/\.mdx$/, "");
       const raw = fs.readFileSync(
@@ -98,6 +105,13 @@ export function getAdjacentInsights(slug: string): {
 /** 모든 Briefs(단신)를 최신순으로 반환. 제목이 없으므로 본문 첫 100자를 발췌로 사용 */
 export function getBriefs(): Brief[] {
   return readMdxFiles("briefs")
+    .filter((file) => {
+      const raw = fs.readFileSync(
+        path.join(CONTENT_DIR, "briefs", file),
+        "utf-8"
+      );
+      return !matter(raw).data.draft;
+    })
     .map((file) => {
       const slug = file.replace(/\.mdx$/, "");
       const raw = fs.readFileSync(
