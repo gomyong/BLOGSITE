@@ -78,12 +78,15 @@ const config: Config = {
         code: ["Geist Mono", "Geist", "monospace"],
       },
       spacing: {
-        // 8px 기반 리듬 스케일
+        // Apple 참고 — 촘촘한 8px 기반 리듬 스케일 (요소 간 여백 축소)
+        xxs: "4px",
         xs: "8px",
-        sm: "16px",
-        md: "24px",
-        lg: "48px",
-        xl: "80px",
+        sm: "12px",
+        md: "17px",
+        lg: "24px",
+        xl: "32px",
+        xxl: "48px",
+        section: "80px",
       },
       maxWidth: {
         "container-max": "1120px",
@@ -92,15 +95,15 @@ const config: Config = {
       fontSize: {
         display: [
           "34px",
-          { lineHeight: "1.25", letterSpacing: "-0.02em", fontWeight: "800" },
+          { lineHeight: "1.1", letterSpacing: "-0.028em", fontWeight: "800" },
         ],
         "headline-lg": [
           "23px",
-          { lineHeight: "1.3", letterSpacing: "-0.02em", fontWeight: "700" },
+          { lineHeight: "1.18", letterSpacing: "-0.022em", fontWeight: "700" },
         ],
         "headline-md": [
           "17px",
-          { lineHeight: "1.4", letterSpacing: "-0.01em", fontWeight: "600" },
+          { lineHeight: "1.3", letterSpacing: "-0.015em", fontWeight: "600" },
         ],
         "body-lg": ["15px", { lineHeight: "1.75", fontWeight: "400" }],
         "body-md": ["13.5px", { lineHeight: "1.65", fontWeight: "400" }],

@@ -12,7 +12,7 @@ export default function Header() {
   return (
     // 글래스모피즘은 내비게이션 헤더에만 허용 — 반투명 + 블러
     <header className="sticky top-0 z-40 border-b border-outline-variant bg-surface/80 backdrop-blur-md">
-      <div className="mx-auto flex h-20 max-w-container-max items-center justify-between px-[20px] md:px-lg">
+      <div className="mx-auto flex h-16 max-w-container-max items-center justify-between px-[20px] md:px-lg">
         <Link
           href="/"
           className="font-headline text-lg font-extrabold tracking-tight text-primary"

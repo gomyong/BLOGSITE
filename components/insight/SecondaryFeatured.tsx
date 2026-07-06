@@ -12,7 +12,7 @@ export default function SecondaryFeatured({
   return (
     <Link
       href={`/insight/${insight.slug}`}
-      className="group flex flex-1 flex-col justify-between border border-outline-variant bg-surface-container-lowest p-md transition-colors hover:border-outline"
+      className="group flex flex-col gap-lg border border-outline-variant bg-surface-container-lowest p-lg transition-colors hover:border-outline"
     >
       <div>
         <div className="mb-md flex items-center gap-xs">

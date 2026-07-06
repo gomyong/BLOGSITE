@@ -21,7 +21,7 @@ export default function HomePage() {
             <FeaturedArticle insight={featured[0]} />
           </div>
           {featured[1] && (
-            <div className="flex md:col-span-4">
+            <div className="md:col-span-4">
               <SecondaryFeatured insight={featured[1]} />
             </div>
           )}

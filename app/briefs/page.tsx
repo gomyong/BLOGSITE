@@ -74,7 +74,7 @@ export default async function BriefsPage({ searchParams }: PageProps) {
         </section>
 
         <aside className="lg:col-span-2">
-          <div className="sticky top-24">
+          <div className="sticky top-20">
             <NewsletterForm />
           </div>
         </aside>
