@@ -30,7 +30,7 @@ export default function FeaturedArticle({ insight }: { insight: InsightMeta }) {
             {formatDate(insight.date)}
           </span>
         </div>
-        <h2 className="mb-sm max-w-2xl font-headline text-3xl font-extrabold leading-tight tracking-tight text-white sm:text-display">
+        <h2 className="mb-sm max-w-2xl font-headline text-2xl font-extrabold leading-tight tracking-tight text-white sm:text-display">
           {insight.title}
         </h2>
         <p className="mb-md line-clamp-2 max-w-xl text-body-md text-white/75 sm:text-body-lg">

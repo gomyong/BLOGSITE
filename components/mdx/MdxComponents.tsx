@@ -47,7 +47,7 @@ function Blockquote(props: React.BlockquoteHTMLAttributes<HTMLQuoteElement>) {
   return (
     <blockquote
       {...props}
-      className="my-8 border-l-2 border-primary-container bg-surface-container-low py-sm pl-md pr-sm text-lg font-medium leading-relaxed text-on-surface-variant"
+      className="my-8 border-l-2 border-primary-container bg-surface-container-low py-sm pl-md pr-sm text-[15px] font-medium leading-relaxed text-on-surface-variant"
     />
   );
 }

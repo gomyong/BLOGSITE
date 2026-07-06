@@ -15,7 +15,7 @@ export default function Header() {
       <div className="mx-auto flex h-20 max-w-container-max items-center justify-between px-[20px] md:px-lg">
         <Link
           href="/"
-          className="font-headline text-xl font-extrabold tracking-tight text-primary"
+          className="font-headline text-lg font-extrabold tracking-tight text-primary"
         >
           {siteConfig.name}
         </Link>

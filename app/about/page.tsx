@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <div className="mx-auto max-w-content-max px-[20px] py-xl md:px-lg">
-      <h1 className="font-headline text-3xl font-extrabold leading-tight tracking-tight text-on-surface sm:text-display">
+      <h1 className="font-headline text-2xl font-extrabold leading-tight tracking-tight text-on-surface sm:text-display">
         기술과 브랜드의 교차점을
         <br />
         정밀하게 읽습니다<span className="text-primary">.</span>

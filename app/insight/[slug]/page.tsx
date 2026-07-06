@@ -112,7 +112,7 @@ export default async function InsightPage({ params }: PageProps) {
                 <Clock size={12} /> {insight.readingTime}분 읽기
               </span>
             </div>
-            <h1 className="mt-md font-headline text-3xl font-extrabold leading-tight tracking-tight text-on-surface sm:text-display">
+            <h1 className="mt-md font-headline text-2xl font-extrabold leading-tight tracking-tight text-on-surface sm:text-display">
               {insight.title}
             </h1>
             <p className="mt-md text-body-lg text-on-surface-variant">
@@ -164,7 +164,7 @@ export default async function InsightPage({ params }: PageProps) {
                 <span className="flex items-center gap-1 font-label text-label-sm uppercase text-on-surface-variant">
                   <ArrowLeft size={12} /> 이전 글
                 </span>
-                <p className="mt-xs line-clamp-2 font-headline text-base font-semibold text-on-surface group-hover:text-primary">
+                <p className="mt-xs line-clamp-2 font-headline text-sm font-semibold text-on-surface group-hover:text-primary">
                   {prev.title}
                 </p>
               </Link>
@@ -179,7 +179,7 @@ export default async function InsightPage({ params }: PageProps) {
                 <span className="flex items-center justify-end gap-1 font-label text-label-sm uppercase text-on-surface-variant">
                   다음 글 <ArrowRight size={12} />
                 </span>
-                <p className="mt-xs line-clamp-2 font-headline text-base font-semibold text-on-surface group-hover:text-primary">
+                <p className="mt-xs line-clamp-2 font-headline text-sm font-semibold text-on-surface group-hover:text-primary">
                   {next.title}
                 </p>
               </Link>

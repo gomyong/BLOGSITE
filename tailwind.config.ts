@@ -55,23 +55,26 @@ const config: Config = {
         error: "#ba1a1a",
       },
       fontFamily: {
-        // 본문: Inter / 제목: Hanken Grotesk / 라벨·코드: Geist (+ 한글 Noto Sans KR)
+        // 한글 타이포: Pretendard 전면 적용 / 라벨·코드: Geist
         sans: [
-          "Inter",
-          "Noto Sans KR",
+          "Pretendard Variable",
+          "Pretendard",
           "-apple-system",
           "BlinkMacSystemFont",
           "system-ui",
+          "Apple SD Gothic Neo",
+          "Noto Sans KR",
           "sans-serif",
         ],
         headline: [
-          "Hanken Grotesk",
-          "Noto Sans KR",
+          "Pretendard Variable",
+          "Pretendard",
           "-apple-system",
           "system-ui",
+          "Apple SD Gothic Neo",
           "sans-serif",
         ],
-        label: ["Geist", "Noto Sans KR", "system-ui", "sans-serif"],
+        label: ["Geist", "Pretendard Variable", "Pretendard", "sans-serif"],
         code: ["Geist Mono", "Geist", "monospace"],
       },
       spacing: {
@@ -88,21 +91,21 @@ const config: Config = {
       },
       fontSize: {
         display: [
-          "48px",
-          { lineHeight: "1.15", letterSpacing: "-0.02em", fontWeight: "800" },
+          "34px",
+          { lineHeight: "1.25", letterSpacing: "-0.02em", fontWeight: "800" },
         ],
         "headline-lg": [
-          "32px",
-          { lineHeight: "1.25", letterSpacing: "-0.02em", fontWeight: "700" },
+          "23px",
+          { lineHeight: "1.3", letterSpacing: "-0.02em", fontWeight: "700" },
         ],
         "headline-md": [
-          "24px",
-          { lineHeight: "1.35", letterSpacing: "-0.02em", fontWeight: "600" },
+          "17px",
+          { lineHeight: "1.4", letterSpacing: "-0.01em", fontWeight: "600" },
         ],
-        "body-lg": ["18px", { lineHeight: "1.7", fontWeight: "400" }],
-        "body-md": ["16px", { lineHeight: "1.6", fontWeight: "400" }],
+        "body-lg": ["15px", { lineHeight: "1.75", fontWeight: "400" }],
+        "body-md": ["13.5px", { lineHeight: "1.65", fontWeight: "400" }],
         "label-sm": [
-          "12px",
+          "11px",
           { lineHeight: "1.2", letterSpacing: "0.05em", fontWeight: "500" },
         ],
       },
@@ -110,8 +113,9 @@ const config: Config = {
         DEFAULT: {
           css: {
             maxWidth: "none",
-            fontFamily: "Inter, 'Noto Sans KR', sans-serif",
-            lineHeight: "1.75",
+            fontFamily: "'Pretendard Variable', Pretendard, sans-serif",
+            fontSize: "14.5px",
+            lineHeight: "1.8",
             "--tw-prose-body": "var(--on-surface)",
             "--tw-prose-headings": "var(--on-surface)",
             "--tw-prose-bold": "var(--on-surface)",
@@ -123,9 +127,11 @@ const config: Config = {
             "--tw-prose-th-borders": "var(--outline-variant)",
             "--tw-prose-td-borders": "var(--outline-variant)",
             "h2, h3, h4": {
-              fontFamily: "'Hanken Grotesk', 'Noto Sans KR', sans-serif",
+              fontFamily: "'Pretendard Variable', Pretendard, sans-serif",
               letterSpacing: "-0.02em",
             },
+            h2: { fontSize: "1.35em" },
+            h3: { fontSize: "1.15em" },
             // 리스트: 프라이머리 틸 사각 불릿
             ul: { listStyleType: "square" },
             "ul > li::marker": { color: "var(--primary-container)" },
@@ -140,7 +146,7 @@ const config: Config = {
             "code::after": { content: "none" },
             code: {
               fontFamily: "'Geist Mono', Geist, monospace",
-              fontSize: "14px",
+              fontSize: "13px",
               backgroundColor: "var(--surface-container-low)",
               border: "1px solid var(--outline-variant)",
               borderRadius: "0",
@@ -150,7 +156,7 @@ const config: Config = {
             // 코드 블록: 좌측 프라이머리 틸 액센트 바 + 플랫 서피스
             pre: {
               fontFamily: "'Geist Mono', Geist, monospace",
-              fontSize: "14px",
+              fontSize: "13px",
               lineHeight: "1.6",
               backgroundColor: "var(--surface-container-low)",
               color: "var(--on-surface)",
