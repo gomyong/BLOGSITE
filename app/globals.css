@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply bg-white text-ink-900 transition-colors duration-300 dark:bg-ink-950 dark:text-ink-100;
+  }
+
+  ::selection {
+    @apply bg-accent/20;
+  }
+}
+
+@layer utilities {
+  /* 스크롤바 미니멀 스타일 (Briefs 피드 등) */
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 4px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-ink-200 dark:bg-ink-800;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
