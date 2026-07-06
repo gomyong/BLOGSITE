@@ -88,9 +88,9 @@ export default async function InsightPage({ params }: PageProps) {
       />
 
       <article>
-        {/* 화면 꽉 차는 고화질 커버 이미지 */}
+        {/* 화면 꽉 차는 고화질 커버 이미지 — 흑백에서 컬러로 서서히 전환 */}
         {insight.coverImage && (
-          <div className="relative h-[45vh] w-full sm:h-[60vh]">
+          <div className="relative h-[45vh] w-full border-b border-outline-variant sm:h-[55vh]">
             <Image
               src={insight.coverImage}
               alt={insight.title}
@@ -99,35 +99,35 @@ export default async function InsightPage({ params }: PageProps) {
               sizes="100vw"
               className="object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#141b2b]/50 to-transparent" />
           </div>
         )}
 
-        {/* 본문 — 읽기 최적화를 위해 최대 너비 700px 제한 */}
-        <div className="mx-auto max-w-[700px] px-5">
-          <header className="-mt-16 relative rounded-t-3xl bg-white px-2 pt-10 sm:px-8 dark:bg-ink-950">
-            <div className="flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-widest text-accent dark:text-accent-dark">
-              <span>{insight.category}</span>
-              <span className="flex items-center gap-1 font-medium normal-case tracking-normal text-ink-400 dark:text-ink-500">
+        {/* Reading Rail — 본문 최대 너비 720px 제한 */}
+        <div className="mx-auto max-w-content-max px-[20px] md:px-lg">
+          <header className="border-b border-outline-variant pb-lg pt-lg">
+            <div className="flex flex-wrap items-center gap-xs">
+              <span className="chip">{insight.category}</span>
+              <span className="flex items-center gap-1 font-label text-label-sm text-on-surface-variant">
                 <Clock size={12} /> {insight.readingTime}분 읽기
               </span>
             </div>
-            <h1 className="mt-4 text-3xl font-extrabold leading-tight tracking-tightest text-ink-950 sm:text-4xl dark:text-white">
+            <h1 className="mt-md font-headline text-3xl font-extrabold leading-tight tracking-tight text-on-surface sm:text-display">
               {insight.title}
             </h1>
-            <p className="mt-4 text-base leading-relaxed text-ink-500 dark:text-ink-400">
+            <p className="mt-md text-body-lg text-on-surface-variant">
               {insight.description}
             </p>
-            <div className="mt-6 flex items-center gap-3 border-b border-ink-100 pb-8 text-sm text-ink-500 dark:border-ink-800 dark:text-ink-400">
-              <span className="font-semibold text-ink-900 dark:text-ink-100">
+            <div className="mt-md flex items-center gap-sm font-label text-label-sm text-on-surface-variant">
+              <span className="font-medium text-on-surface">
                 {insight.author}
               </span>
-              <span className="text-ink-300 dark:text-ink-600">·</span>
+              <span className="text-outline-variant">|</span>
               <time dateTime={insight.date}>{formatDate(insight.date)}</time>
             </div>
           </header>
 
-          <div className="prose prose-ink px-2 py-10 dark:prose-invert sm:px-8">
+          <div className="prose py-lg">
             <MDXRemote source={firstPart} components={mdxComponents} />
             <NewsletterForm
               variant="compact"
@@ -137,56 +137,54 @@ export default async function InsightPage({ params }: PageProps) {
             <MDXRemote source={secondPart} components={mdxComponents} />
           </div>
 
-          <div className="px-2 sm:px-8">
-            {insight.tags.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {insight.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="rounded-full bg-ink-50 px-3 py-1 text-xs font-medium text-ink-500 dark:bg-ink-900 dark:text-ink-400"
-                  >
-                    #{tag}
-                  </span>
-                ))}
-              </div>
-            )}
-
-            <div className="mt-10">
-              <NewsletterForm />
+          {insight.tags.length > 0 && (
+            <div className="flex flex-wrap gap-xs">
+              {insight.tags.map((tag) => (
+                <span key={tag} className="chip">
+                  #{tag}
+                </span>
+              ))}
             </div>
+          )}
 
-            {/* 이전 글 / 다음 글 */}
-            <nav className="mt-10 grid gap-4 border-t border-ink-100 py-10 sm:grid-cols-2 dark:border-ink-800">
-              {prev ? (
-                <Link
-                  href={`/insight/${prev.slug}`}
-                  className="group rounded-xl border border-ink-100 p-5 transition-colors hover:border-ink-300 dark:border-ink-800 dark:hover:border-ink-600"
-                >
-                  <span className="flex items-center gap-1 text-xs font-medium text-ink-400 dark:text-ink-500">
-                    <ArrowLeft size={12} /> 이전 글
-                  </span>
-                  <p className="mt-2 line-clamp-2 text-sm font-bold text-ink-900 group-hover:text-accent dark:text-ink-100 dark:group-hover:text-accent-dark">
-                    {prev.title}
-                  </p>
-                </Link>
-              ) : (
-                <div />
-              )}
-              {next && (
-                <Link
-                  href={`/insight/${next.slug}`}
-                  className="group rounded-xl border border-ink-100 p-5 text-right transition-colors hover:border-ink-300 dark:border-ink-800 dark:hover:border-ink-600"
-                >
-                  <span className="flex items-center justify-end gap-1 text-xs font-medium text-ink-400 dark:text-ink-500">
-                    다음 글 <ArrowRight size={12} />
-                  </span>
-                  <p className="mt-2 line-clamp-2 text-sm font-bold text-ink-900 group-hover:text-accent dark:text-ink-100 dark:group-hover:text-accent-dark">
-                    {next.title}
-                  </p>
-                </Link>
-              )}
-            </nav>
+          <div className="mt-lg">
+            <NewsletterForm
+              title="뉴스레터 구독"
+              description="매주 한 번, 기술과 브랜드의 흐름을 짚어주는 인사이트를 메일함으로 보내드립니다."
+            />
           </div>
+
+          {/* 이전 글 / 다음 글 */}
+          <nav className="grid gap-md border-t border-outline-variant py-lg sm:grid-cols-2 mt-lg">
+            {prev ? (
+              <Link
+                href={`/insight/${prev.slug}`}
+                className="group border border-outline-variant bg-surface-container-lowest p-md transition-colors hover:border-outline"
+              >
+                <span className="flex items-center gap-1 font-label text-label-sm uppercase text-on-surface-variant">
+                  <ArrowLeft size={12} /> 이전 글
+                </span>
+                <p className="mt-xs line-clamp-2 font-headline text-base font-semibold text-on-surface group-hover:text-primary">
+                  {prev.title}
+                </p>
+              </Link>
+            ) : (
+              <div />
+            )}
+            {next && (
+              <Link
+                href={`/insight/${next.slug}`}
+                className="group border border-outline-variant bg-surface-container-lowest p-md text-right transition-colors hover:border-outline"
+              >
+                <span className="flex items-center justify-end gap-1 font-label text-label-sm uppercase text-on-surface-variant">
+                  다음 글 <ArrowRight size={12} />
+                </span>
+                <p className="mt-xs line-clamp-2 font-headline text-base font-semibold text-on-surface group-hover:text-primary">
+                  {next.title}
+                </p>
+              </Link>
+            )}
+          </nav>
         </div>
       </article>
     </>

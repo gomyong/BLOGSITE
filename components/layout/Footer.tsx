@@ -3,25 +3,36 @@ import { siteConfig } from "@/lib/site";
 
 export default function Footer() {
   return (
-    <footer className="border-t border-ink-100 dark:border-ink-800">
-      <div className="mx-auto flex max-w-6xl flex-col gap-4 px-5 py-10 sm:flex-row sm:items-center sm:justify-between">
+    <footer className="border-t border-outline-variant bg-surface-container-lowest">
+      <div className="mx-auto flex max-w-container-max flex-col justify-between gap-md px-[20px] py-lg md:flex-row md:items-center md:px-lg">
         <div>
-          <p className="text-sm font-bold tracking-tight text-ink-950 dark:text-white">
+          <p className="font-headline text-headline-md font-bold text-on-surface">
             {siteConfig.name}
-            <span className="text-accent dark:text-accent-dark">.</span>
           </p>
-          <p className="mt-1 text-xs leading-relaxed text-ink-400 dark:text-ink-500">
-            {siteConfig.tagline} — 기술과 브랜드의 흐름에 밑줄을 긋습니다.
+          <p className="mt-xs text-body-md text-primary">
+            © {new Date().getFullYear()} {siteConfig.name}. 정밀하게
+            구축되었습니다.
           </p>
         </div>
-        <div className="flex items-center gap-5 text-xs text-ink-400 dark:text-ink-500">
-          <Link href="/about" className="hover:text-ink-900 dark:hover:text-ink-100">
-            About
-          </Link>
-          <Link href="/briefs" className="hover:text-ink-900 dark:hover:text-ink-100">
+        <div className="flex gap-md">
+          <Link
+            href="/briefs"
+            className="font-label text-label-sm uppercase text-on-surface-variant underline decoration-2 underline-offset-4 transition-colors hover:text-primary"
+          >
             Briefs
           </Link>
-          <span>© {new Date().getFullYear()} {siteConfig.name}</span>
+          <Link
+            href="/about"
+            className="font-label text-label-sm uppercase text-on-surface-variant underline decoration-2 underline-offset-4 transition-colors hover:text-primary"
+          >
+            About
+          </Link>
+          <a
+            href="/sitemap.xml"
+            className="font-label text-label-sm uppercase text-on-surface-variant underline decoration-2 underline-offset-4 transition-colors hover:text-primary"
+          >
+            Sitemap
+          </a>
         </div>
       </div>
     </footer>

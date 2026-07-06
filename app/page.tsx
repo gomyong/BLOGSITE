@@ -1,45 +1,52 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 import { getBriefs, getFeaturedInsights, getInsights } from "@/lib/mdx";
 import FeaturedArticle from "@/components/insight/FeaturedArticle";
+import SecondaryFeatured from "@/components/insight/SecondaryFeatured";
 import InsightCard from "@/components/insight/InsightCard";
 import BriefItem from "@/components/briefs/BriefItem";
 import NewsletterForm from "@/components/layout/NewsletterForm";
 
 export default function HomePage() {
-  const featured = getFeaturedInsights(3);
+  // 벤토 히어로에는 featured 2개만 사용, 나머지는 그리드로
+  const featured = getFeaturedInsights(2);
   const featuredSlugs = new Set(featured.map((i) => i.slug));
   const insights = getInsights().filter((i) => !featuredSlugs.has(i.slug));
   const briefs = getBriefs().slice(0, 8);
 
   return (
-    <div className="mx-auto max-w-6xl px-5 py-8 sm:py-12">
-      {/* Hero / Featured — 디에디트 스타일 매거진 표지 */}
+    <div className="mx-auto max-w-container-max px-[20px] py-lg md:px-lg">
+      {/* Featured — 벤토 스타일 히어로 (메인 셀 8열 + 보조 셀 4열) */}
       {featured.length > 0 && (
-        <section aria-label="Featured" className="space-y-6">
-          <FeaturedArticle insight={featured[0]} />
-          {featured.length > 1 && (
-            <div className="grid gap-6 sm:grid-cols-2">
-              {featured.slice(1).map((insight) => (
-                <InsightCard key={insight.slug} insight={insight} />
-              ))}
+        <section
+          aria-label="Featured"
+          className="mb-xl grid grid-cols-1 gap-md md:grid-cols-12"
+        >
+          <div className="md:col-span-8">
+            <FeaturedArticle insight={featured[0]} />
+          </div>
+          <div className="flex flex-col gap-md md:col-span-4">
+            {featured[1] && <SecondaryFeatured insight={featured[1]} />}
+            <div id="newsletter">
+              <NewsletterForm />
             </div>
-          )}
+          </div>
         </section>
       )}
 
-      {/* Dual Layout: Insights 그리드(60%) + Briefs 타임라인(40%) */}
-      <div className="mt-16 grid gap-12 lg:grid-cols-5">
+      <hr className="mb-xl border-outline-variant" />
+
+      {/* Dual Layout: Insights 그리드 + Briefs 타임라인 */}
+      <div className="grid gap-lg lg:grid-cols-5">
         <section aria-label="Insights" className="lg:col-span-3">
-          <div className="flex items-baseline justify-between border-b border-ink-950 pb-3 dark:border-white">
-            <h2 className="text-xl font-extrabold tracking-tightest text-ink-950 dark:text-white">
-              Insights
+          <div className="mb-lg flex items-end justify-between">
+            <h2 className="font-headline text-headline-lg font-bold text-on-surface">
+              최신 발간물
             </h2>
-            <span className="text-xs font-medium uppercase tracking-widest text-ink-400 dark:text-ink-500">
-              심층 아티클
+            <span className="font-label text-label-sm uppercase text-on-surface-variant">
+              Insights
             </span>
           </div>
-          <div className="mt-8 grid gap-x-6 gap-y-10 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-lg sm:grid-cols-2">
             {insights.map((insight) => (
               <InsightCard key={insight.slug} insight={insight} />
             ))}
@@ -47,27 +54,30 @@ export default function HomePage() {
         </section>
 
         <aside aria-label="Briefs" className="lg:col-span-2">
-          <div className="flex items-baseline justify-between border-b border-ink-950 pb-3 dark:border-white">
-            <h2 className="text-xl font-extrabold tracking-tightest text-ink-950 dark:text-white">
-              Briefs
+          <div className="mb-lg flex items-end justify-between">
+            <h2 className="font-headline text-headline-lg font-bold text-on-surface">
+              브리프
             </h2>
             <Link
               href="/briefs"
-              className="inline-flex items-center gap-1 text-xs font-semibold text-accent hover:underline dark:text-accent-dark"
+              className="font-label text-label-sm uppercase text-primary underline decoration-2 underline-offset-4 hover:text-primary-container"
             >
-              전체 보기 <ArrowRight size={12} />
+              전체 보기
             </Link>
           </div>
 
-          <div className="scrollbar-thin mt-4 max-h-[560px] overflow-y-auto pr-2">
+          <div className="scrollbar-thin max-h-[640px] overflow-y-auto border border-outline-variant bg-surface-container-lowest px-md py-md">
             {briefs.map((brief) => (
               <BriefItem key={brief.slug} brief={brief} />
             ))}
           </div>
 
-          {/* Sticky Newsletter Box — 스크롤을 내려도 우측에 고정 노출 */}
-          <div className="sticky top-24 mt-8">
-            <NewsletterForm />
+          {/* Sticky Newsletter Box — 스크롤을 내려도 고정 노출 */}
+          <div className="sticky top-24 mt-md">
+            <NewsletterForm
+              title="뉴스레터 구독"
+              description="매주 한 번, 기술과 브랜드의 흐름을 짚어주는 인사이트를 메일함으로 보내드립니다."
+            />
           </div>
         </aside>
       </div>

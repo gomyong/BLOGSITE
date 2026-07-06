@@ -1,5 +1,10 @@
 import type { Config } from "tailwindcss";
 
+/**
+ * "Technical Precision" 디자인 시스템
+ * — 0px 직각 셰이프, Dark Topaz(#006D77) 프라이머리, 플랫/보더 기반 뎁스.
+ * 색상 토큰은 globals.css의 CSS 변수(라이트/다크)를 참조한다.
+ */
 const config: Config = {
   darkMode: "class",
   content: [
@@ -8,87 +13,158 @@ const config: Config = {
     "./content/**/*.mdx",
   ],
   theme: {
+    // 셰이프 언어: 전면 Sharp(0px) — 모든 rounded-* 유틸을 0으로 고정
+    borderRadius: {
+      none: "0",
+      sm: "0",
+      DEFAULT: "0",
+      md: "0",
+      lg: "0",
+      xl: "0",
+      "2xl": "0",
+      "3xl": "0",
+      full: "0",
+    },
     extend: {
+      colors: {
+        surface: "var(--surface)",
+        "surface-dim": "var(--surface-dim)",
+        "surface-container-lowest": "var(--surface-container-lowest)",
+        "surface-container-low": "var(--surface-container-low)",
+        "surface-container": "var(--surface-container)",
+        "surface-container-high": "var(--surface-container-high)",
+        "surface-container-highest": "var(--surface-container-highest)",
+        "on-surface": "var(--on-surface)",
+        "on-surface-variant": "var(--on-surface-variant)",
+        outline: "var(--outline)",
+        "outline-variant": "var(--outline-variant)",
+        primary: "var(--primary)",
+        "on-primary": "var(--on-primary)",
+        "primary-container": "var(--primary-container)",
+        "on-primary-container": "var(--on-primary-container)",
+        "primary-fixed": "#9ff0fb",
+        "primary-fixed-dim": "#82d3de",
+        "on-primary-fixed": "#001f23",
+        secondary: "var(--secondary)",
+        "secondary-fixed": "#acefe7",
+        "on-secondary-fixed": "#00201e",
+        "on-secondary-fixed-variant": "#00504b",
+        tertiary: "var(--tertiary)",
+        "inverse-surface": "var(--inverse-surface)",
+        "inverse-on-surface": "var(--inverse-on-surface)",
+        error: "#ba1a1a",
+      },
       fontFamily: {
+        // 본문: Inter / 제목: Hanken Grotesk / 라벨·코드: Geist (+ 한글 Noto Sans KR)
         sans: [
-          "Pretendard Variable",
-          "Pretendard",
+          "Inter",
+          "Noto Sans KR",
           "-apple-system",
           "BlinkMacSystemFont",
           "system-ui",
-          "Roboto",
-          "Helvetica Neue",
-          "Segoe UI",
-          "Apple SD Gothic Neo",
-          "Noto Sans KR",
-          "Malgun Gothic",
           "sans-serif",
         ],
+        headline: [
+          "Hanken Grotesk",
+          "Noto Sans KR",
+          "-apple-system",
+          "system-ui",
+          "sans-serif",
+        ],
+        label: ["Geist", "Noto Sans KR", "system-ui", "sans-serif"],
+        code: ["Geist Mono", "Geist", "monospace"],
       },
-      colors: {
-        ink: {
-          50: "#f7f7f8",
-          100: "#eeeef0",
-          200: "#d9d9de",
-          300: "#b8b8c1",
-          400: "#92929e",
-          500: "#747483",
-          600: "#5e5e6b",
-          700: "#4d4d57",
-          800: "#2b2b31",
-          900: "#1a1a1e",
-          950: "#101013",
-        },
-        accent: {
-          DEFAULT: "#e8590c",
-          soft: "#fff0e6",
-          dark: "#ff8a4c",
-        },
+      spacing: {
+        // 8px 기반 리듬 스케일
+        xs: "8px",
+        sm: "16px",
+        md: "24px",
+        lg: "48px",
+        xl: "80px",
       },
-      letterSpacing: {
-        tightest: "-0.04em",
+      maxWidth: {
+        "container-max": "1120px",
+        "content-max": "720px",
+      },
+      fontSize: {
+        display: [
+          "48px",
+          { lineHeight: "1.15", letterSpacing: "-0.02em", fontWeight: "800" },
+        ],
+        "headline-lg": [
+          "32px",
+          { lineHeight: "1.25", letterSpacing: "-0.02em", fontWeight: "700" },
+        ],
+        "headline-md": [
+          "24px",
+          { lineHeight: "1.35", letterSpacing: "-0.02em", fontWeight: "600" },
+        ],
+        "body-lg": ["18px", { lineHeight: "1.7", fontWeight: "400" }],
+        "body-md": ["16px", { lineHeight: "1.6", fontWeight: "400" }],
+        "label-sm": [
+          "12px",
+          { lineHeight: "1.2", letterSpacing: "0.05em", fontWeight: "500" },
+        ],
       },
       typography: () => ({
         DEFAULT: {
           css: {
             maxWidth: "none",
-            "--tw-prose-body": "#2b2b31",
-            "--tw-prose-headings": "#101013",
-            "--tw-prose-quotes": "#4d4d57",
-            "--tw-prose-quote-borders": "#e8590c",
-            "--tw-prose-invert-body": "#d9d9de",
-            "--tw-prose-invert-headings": "#f7f7f8",
-            "--tw-prose-invert-quotes": "#b8b8c1",
-            "--tw-prose-invert-quote-borders": "#ff8a4c",
-            lineHeight: "1.85",
-            letterSpacing: "-0.01em",
-            "h2, h3": {
+            fontFamily: "Inter, 'Noto Sans KR', sans-serif",
+            lineHeight: "1.75",
+            "--tw-prose-body": "var(--on-surface)",
+            "--tw-prose-headings": "var(--on-surface)",
+            "--tw-prose-bold": "var(--on-surface)",
+            "--tw-prose-links": "var(--primary)",
+            "--tw-prose-quotes": "var(--on-surface-variant)",
+            "--tw-prose-quote-borders": "var(--primary-container)",
+            "--tw-prose-counters": "var(--primary)",
+            "--tw-prose-hr": "var(--outline-variant)",
+            "--tw-prose-th-borders": "var(--outline-variant)",
+            "--tw-prose-td-borders": "var(--outline-variant)",
+            "h2, h3, h4": {
+              fontFamily: "'Hanken Grotesk', 'Noto Sans KR', sans-serif",
               letterSpacing: "-0.02em",
             },
+            // 리스트: 프라이머리 틸 사각 불릿
+            ul: { listStyleType: "square" },
+            "ul > li::marker": { color: "var(--primary-container)" },
             blockquote: {
               fontStyle: "normal",
               fontWeight: "500",
+              borderLeftWidth: "2px",
             },
             "blockquote p:first-of-type::before": { content: "none" },
             "blockquote p:last-of-type::after": { content: "none" },
             "code::before": { content: "none" },
             "code::after": { content: "none" },
             code: {
-              backgroundColor: "#eeeef0",
-              borderRadius: "0.25rem",
-              padding: "0.15rem 0.4rem",
-              fontWeight: "500",
+              fontFamily: "'Geist Mono', Geist, monospace",
+              fontSize: "14px",
+              backgroundColor: "var(--surface-container-low)",
+              border: "1px solid var(--outline-variant)",
+              borderRadius: "0",
+              padding: "0.1rem 0.35rem",
+              fontWeight: "400",
             },
-            img: {
-              borderRadius: "0.5rem",
+            // 코드 블록: 좌측 프라이머리 틸 액센트 바 + 플랫 서피스
+            pre: {
+              fontFamily: "'Geist Mono', Geist, monospace",
+              fontSize: "14px",
+              lineHeight: "1.6",
+              backgroundColor: "var(--surface-container-low)",
+              color: "var(--on-surface)",
+              border: "1px solid var(--outline-variant)",
+              borderLeft: "3px solid var(--primary-container)",
+              borderRadius: "0",
             },
-          },
-        },
-        invert: {
-          css: {
-            code: {
-              backgroundColor: "#2b2b31",
+            "pre code": {
+              backgroundColor: "transparent",
+              border: "none",
+              padding: "0",
             },
+            img: { borderRadius: "0" },
+            a: { textUnderlineOffset: "4px" },
           },
         },
       }),

@@ -2,6 +2,52 @@
 @tailwind components;
 @tailwind utilities;
 
+/* "Technical Precision" 색상 토큰 — 라이트 팔레트는 디자인 가이드 원본 값 */
+:root {
+  --surface: #f9f9ff;
+  --surface-dim: #d3daef;
+  --surface-container-lowest: #ffffff;
+  --surface-container-low: #f1f3ff;
+  --surface-container: #e9edff;
+  --surface-container-high: #e1e8fd;
+  --surface-container-highest: #dce2f7;
+  --on-surface: #141b2b;
+  --on-surface-variant: #3e494a;
+  --outline: #6f797a;
+  --outline-variant: #bec8ca;
+  --primary: #00535b;
+  --on-primary: #ffffff;
+  --primary-container: #006d77;
+  --on-primary-container: #9becf7;
+  --secondary: #236863;
+  --tertiary: #713d10;
+  --inverse-surface: #293040;
+  --inverse-on-surface: #edf0ff;
+}
+
+/* 다크 모드 — 동일 구조의 톤 반전 매핑 */
+.dark {
+  --surface: #0e1116;
+  --surface-dim: #0a0d11;
+  --surface-container-lowest: #090c10;
+  --surface-container-low: #161a21;
+  --surface-container: #1b202a;
+  --surface-container-high: #222834;
+  --surface-container-highest: #2a3140;
+  --on-surface: #e2e6f0;
+  --on-surface-variant: #a9b4b6;
+  --outline: #8a9495;
+  --outline-variant: #39444b;
+  --primary: #82d3de;
+  --on-primary: #00363c;
+  --primary-container: #006d77;
+  --on-primary-container: #9becf7;
+  --secondary: #90d3cb;
+  --tertiary: #ffb783;
+  --inverse-surface: #e2e6f0;
+  --inverse-on-surface: #141b2b;
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;
@@ -10,21 +56,28 @@
   }
 
   body {
-    @apply bg-white text-ink-900 transition-colors duration-300 dark:bg-ink-950 dark:text-ink-100;
+    @apply bg-surface text-on-surface transition-colors duration-300;
+    word-break: keep-all;
   }
 
   ::selection {
-    @apply bg-accent/20;
+    @apply bg-primary-container text-white;
+  }
+}
+
+@layer components {
+  /* 사각 챕 라벨 — Geist, 대문자, 라이트 틸 배경 */
+  .chip {
+    @apply inline-flex items-center bg-secondary-fixed/60 px-xs py-[3px] font-label text-label-sm uppercase text-on-secondary-fixed-variant dark:bg-secondary-fixed/15 dark:text-secondary;
   }
 }
 
 @layer utilities {
-  /* 스크롤바 미니멀 스타일 (Briefs 피드 등) */
   .scrollbar-thin::-webkit-scrollbar {
     width: 4px;
   }
   .scrollbar-thin::-webkit-scrollbar-thumb {
-    @apply rounded-full bg-ink-200 dark:bg-ink-800;
+    background: var(--outline-variant);
   }
   .scrollbar-thin::-webkit-scrollbar-track {
     background: transparent;

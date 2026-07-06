@@ -30,19 +30,20 @@ export default async function BriefsPage({ searchParams }: PageProps) {
   );
 
   return (
-    <div className="mx-auto max-w-6xl px-5 py-10">
-      <div className="grid gap-12 lg:grid-cols-5">
+    <div className="mx-auto max-w-container-max px-[20px] py-lg md:px-lg">
+      <div className="grid gap-lg lg:grid-cols-5">
         <section className="lg:col-span-3">
-          <header className="border-b border-ink-950 pb-4 dark:border-white">
-            <h1 className="text-3xl font-extrabold tracking-tightest text-ink-950 dark:text-white">
-              Briefs
+          <header className="border-b border-outline-variant pb-md">
+            <h1 className="font-headline text-headline-lg font-bold text-on-surface">
+              브리프
             </h1>
-            <p className="mt-2 text-sm text-ink-500 dark:text-ink-400">
-              짧고 빠른 테크 · 브랜드 단신. 놓치면 아쉬운 소식만 골라 담았습니다.
+            <p className="mt-xs text-body-md text-on-surface-variant">
+              짧고 빠른 테크 · 브랜드 단신. 놓치면 아쉬운 소식만 골라
+              담았습니다.
             </p>
           </header>
 
-          <div className="mt-2">
+          <div className="mt-xs">
             {pageBriefs.map((brief) => (
               <BriefItem key={brief.slug} brief={brief} />
             ))}
@@ -52,17 +53,17 @@ export default async function BriefsPage({ searchParams }: PageProps) {
           {totalPages > 1 && (
             <nav
               aria-label="페이지네이션"
-              className="mt-10 flex items-center justify-center gap-2"
+              className="mt-lg flex items-center justify-center gap-xs"
             >
               {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
                 <Link
                   key={p}
                   href={p === 1 ? "/briefs" : `/briefs?page=${p}`}
                   className={cn(
-                    "flex h-9 w-9 items-center justify-center rounded-lg text-sm font-semibold transition-colors",
+                    "flex h-9 w-9 items-center justify-center border font-label text-label-sm transition-colors",
                     p === currentPage
-                      ? "bg-ink-950 text-white dark:bg-white dark:text-ink-950"
-                      : "text-ink-500 hover:bg-ink-100 dark:text-ink-400 dark:hover:bg-ink-800"
+                      ? "border-on-surface bg-on-surface text-surface"
+                      : "border-outline-variant text-on-surface-variant hover:border-primary hover:text-primary"
                   )}
                 >
                   {p}

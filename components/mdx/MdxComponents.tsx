@@ -5,21 +5,17 @@ import type { MDXComponents } from "mdx/types";
 /** 외부 링크는 새 탭, 내부 링크는 next/link로 처리 */
 function CustomLink(props: React.AnchorHTMLAttributes<HTMLAnchorElement>) {
   const href = props.href ?? "";
+  const className =
+    "font-medium text-primary underline decoration-2 underline-offset-4 hover:text-primary-container";
   if (href.startsWith("/")) {
-    return (
-      <Link
-        href={href}
-        {...props}
-        className="font-medium text-accent underline underline-offset-4 dark:text-accent-dark"
-      />
-    );
+    return <Link href={href} {...props} className={className} />;
   }
   return (
     <a
       {...props}
       target="_blank"
       rel="noopener noreferrer"
-      className="font-medium text-accent underline underline-offset-4 dark:text-accent-dark"
+      className={className}
     />
   );
 }
@@ -29,7 +25,7 @@ function CustomImage({ src, alt }: { src?: string; alt?: string }) {
   if (!src) return null;
   return (
     <figure className="my-8">
-      <div className="relative aspect-[16/9] w-full overflow-hidden rounded-xl">
+      <div className="relative aspect-video w-full overflow-hidden border border-outline-variant">
         <Image
           src={src}
           alt={alt ?? ""}
@@ -39,7 +35,7 @@ function CustomImage({ src, alt }: { src?: string; alt?: string }) {
         />
       </div>
       {alt && (
-        <figcaption className="mt-3 text-center text-[13px] text-ink-400 dark:text-ink-500">
+        <figcaption className="mt-3 text-center font-label text-[13px] text-on-surface-variant">
           {alt}
         </figcaption>
       )}
@@ -51,7 +47,7 @@ function Blockquote(props: React.BlockquoteHTMLAttributes<HTMLQuoteElement>) {
   return (
     <blockquote
       {...props}
-      className="my-8 border-l-2 border-accent py-1 pl-6 text-lg font-medium leading-relaxed text-ink-700 dark:border-accent-dark dark:text-ink-300"
+      className="my-8 border-l-2 border-primary-container bg-surface-container-low py-sm pl-md pr-sm text-lg font-medium leading-relaxed text-on-surface-variant"
     />
   );
 }

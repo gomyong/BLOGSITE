@@ -1,46 +1,46 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import type { InsightMeta } from "@/lib/mdx";
 import { formatDate } from "@/lib/utils";
 
-/** 디에디트 스타일 — 매거진 표지처럼 큰 썸네일의 Featured 아티클 */
+/** 벤토 히어로의 메인 셀 — 흑백 커버가 호버 시 컬러로 전환되는 Featured 아티클 */
 export default function FeaturedArticle({ insight }: { insight: InsightMeta }) {
   return (
     <Link
       href={`/insight/${insight.slug}`}
-      className="group relative block overflow-hidden rounded-3xl"
+      className="group relative block min-h-[400px] overflow-hidden border border-outline-variant bg-surface-container-lowest"
     >
-      <div className="relative aspect-[16/10] w-full sm:aspect-[21/10]">
-        <Image
-          src={insight.coverImage}
-          alt={insight.title}
-          fill
-          priority
-          sizes="(max-width: 1152px) 100vw, 1152px"
-          className="object-cover transition-transform duration-700 group-hover:scale-105"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-      </div>
+      <Image
+        src={insight.coverImage}
+        alt={insight.title}
+        fill
+        priority
+        sizes="(max-width: 768px) 100vw, 740px"
+        className="object-cover grayscale transition-all duration-700 group-hover:grayscale-0"
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#141b2b]/90 via-[#141b2b]/40 to-transparent" />
 
-      <div className="absolute inset-x-0 bottom-0 p-6 sm:p-10">
-        <div className="flex items-center gap-3 text-xs font-semibold uppercase tracking-widest text-white/70">
-          <span className="rounded-full bg-white/15 px-3 py-1 backdrop-blur-sm">
+      <div className="absolute bottom-0 left-0 w-full p-md sm:p-lg">
+        <div className="mb-sm flex items-center gap-xs">
+          <span className="chip border border-primary-fixed/30 bg-primary-container/30 text-primary-fixed backdrop-blur-sm dark:bg-primary-container/30 dark:text-primary-fixed">
             {insight.category}
           </span>
-          <span>{formatDate(insight.date)}</span>
+          <span className="font-label text-label-sm text-white/70">
+            {formatDate(insight.date)}
+          </span>
         </div>
-        <h2 className="mt-4 max-w-3xl text-2xl font-extrabold leading-snug tracking-tightest text-white sm:text-4xl">
+        <h2 className="mb-sm max-w-2xl font-headline text-3xl font-extrabold leading-tight tracking-tight text-white sm:text-display">
           {insight.title}
         </h2>
-        <p className="mt-3 line-clamp-2 max-w-2xl text-sm leading-relaxed text-white/75 sm:text-base">
+        <p className="mb-md line-clamp-2 max-w-xl text-body-md text-white/75 sm:text-body-lg">
           {insight.description}
         </p>
-        <span className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-white">
-          아티클 읽기
-          <ArrowUpRight
+        <span className="inline-flex items-center gap-xs font-label text-label-sm uppercase text-primary-fixed transition-colors group-hover:text-white">
+          기사 읽기
+          <ArrowRight
             size={16}
-            className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+            className="transition-transform group-hover:translate-x-1"
           />
         </span>
       </div>

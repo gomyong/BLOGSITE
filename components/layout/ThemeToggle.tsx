@@ -24,7 +24,7 @@ export default function ThemeToggle() {
       type="button"
       onClick={toggle}
       aria-label="다크모드 전환"
-      className="rounded-full p-2 text-ink-500 transition-colors hover:bg-ink-100 hover:text-ink-900 dark:text-ink-400 dark:hover:bg-ink-800 dark:hover:text-ink-100"
+      className="p-2 text-on-surface-variant transition-colors hover:bg-surface-container-low hover:text-primary"
     >
       {/* 마운트 전에는 아이콘을 고정해 hydration mismatch 방지 */}
       {mounted && isDark ? <Sun size={18} /> : <Moon size={18} />}
