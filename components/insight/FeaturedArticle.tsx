@@ -19,11 +19,11 @@ export default function FeaturedArticle({ insight }: { insight: InsightMeta }) {
         sizes="(max-width: 768px) 100vw, 740px"
         className="object-cover grayscale transition-all duration-700 group-hover:grayscale-0"
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-[#141b2b]/90 via-[#141b2b]/40 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#1a1c1e]/90 via-[#1a1c1e]/40 to-transparent" />
 
       <div className="absolute bottom-0 left-0 w-full p-md sm:p-lg">
         <div className="mb-sm flex items-center gap-xs">
-          <span className="chip border border-primary-fixed/30 bg-primary-container/30 text-primary-fixed backdrop-blur-sm dark:bg-primary-container/30 dark:text-primary-fixed">
+          <span className="chip border border-white/25 bg-white/15 text-white backdrop-blur-sm">
             {insight.category}
           </span>
           <span className="font-label text-label-sm text-white/70">
@@ -36,7 +36,7 @@ export default function FeaturedArticle({ insight }: { insight: InsightMeta }) {
         <p className="mb-md line-clamp-2 max-w-xl text-body-md text-white/75 sm:text-body-lg">
           {insight.description}
         </p>
-        <span className="inline-flex items-center gap-xs font-label text-label-sm uppercase text-primary-fixed transition-colors group-hover:text-white">
+        <span className="inline-flex items-center gap-xs font-label text-label-sm uppercase text-white/90 transition-colors group-hover:text-white">
           기사 읽기
           <ArrowRight
             size={16}

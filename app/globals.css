@@ -2,50 +2,53 @@
 @tailwind components;
 @tailwind utilities;
 
-/* "Technical Precision" 색상 토큰 — 라이트 팔레트는 디자인 가이드 원본 값 */
+/*
+ * 색상 시스템 — 블루 액센트 기반
+ *  key(primary): #007AFF · sub(container): #EBF5FF · bg(surface): #F8FAFC · tertiary(ink): #1A1C1E
+ */
 :root {
-  --surface: #f9f9ff;
-  --surface-dim: #d3daef;
+  --surface: #f8fafc;
+  --surface-dim: #e2e8f0;
   --surface-container-lowest: #ffffff;
-  --surface-container-low: #f1f3ff;
-  --surface-container: #e9edff;
-  --surface-container-high: #e1e8fd;
-  --surface-container-highest: #dce2f7;
-  --on-surface: #141b2b;
-  --on-surface-variant: #3e494a;
-  --outline: #6f797a;
-  --outline-variant: #bec8ca;
-  --primary: #00535b;
+  --surface-container-low: #f1f5f9;
+  --surface-container: #ebf5ff;
+  --surface-container-high: #e2eefc;
+  --surface-container-highest: #d6e6fa;
+  --on-surface: #1a1c1e;
+  --on-surface-variant: #52606d;
+  --outline: #8a97a5;
+  --outline-variant: #e2e8f0;
+  --primary: #007aff;
   --on-primary: #ffffff;
-  --primary-container: #006d77;
-  --on-primary-container: #9becf7;
-  --secondary: #236863;
-  --tertiary: #713d10;
-  --inverse-surface: #293040;
-  --inverse-on-surface: #edf0ff;
+  --primary-container: #007aff;
+  --on-primary-container: #ebf5ff;
+  --secondary: #007aff;
+  --tertiary: #1a1c1e;
+  --inverse-surface: #1a1c1e;
+  --inverse-on-surface: #f8fafc;
 }
 
-/* 다크 모드 — 동일 구조의 톤 반전 매핑 */
+/* 다크 모드 — 동일 구조의 톤 반전 매핑 (링크·액센트는 밝은 블루) */
 .dark {
-  --surface: #0e1116;
+  --surface: #0f1216;
   --surface-dim: #0a0d11;
-  --surface-container-lowest: #090c10;
-  --surface-container-low: #161a21;
-  --surface-container: #1b202a;
+  --surface-container-lowest: #0b0e12;
+  --surface-container-low: #161a20;
+  --surface-container: #1b2028;
   --surface-container-high: #222834;
   --surface-container-highest: #2a3140;
-  --on-surface: #e2e6f0;
-  --on-surface-variant: #a9b4b6;
-  --outline: #8a9495;
-  --outline-variant: #39444b;
-  --primary: #82d3de;
-  --on-primary: #00363c;
-  --primary-container: #006d77;
-  --on-primary-container: #9becf7;
-  --secondary: #90d3cb;
-  --tertiary: #ffb783;
-  --inverse-surface: #e2e6f0;
-  --inverse-on-surface: #141b2b;
+  --on-surface: #e6eaf0;
+  --on-surface-variant: #a6b0bd;
+  --outline: #8a97a5;
+  --outline-variant: #333b45;
+  --primary: #4da3ff;
+  --on-primary: #08213d;
+  --primary-container: #007aff;
+  --on-primary-container: #ebf5ff;
+  --secondary: #4da3ff;
+  --tertiary: #1a1c1e;
+  --inverse-surface: #e6eaf0;
+  --inverse-on-surface: #1a1c1e;
 }
 
 @layer base {
@@ -66,9 +69,9 @@
 }
 
 @layer components {
-  /* 사각 챕 라벨 — Geist, 대문자, 라이트 틸 배경 */
+  /* 사각 챕 라벨 — Geist, 대문자, 서브 컬러(#EBF5FF) 배경 + 키 컬러 텍스트 */
   .chip {
-    @apply inline-flex items-center bg-secondary-fixed/60 px-xs py-[3px] font-label text-label-sm uppercase text-on-secondary-fixed-variant dark:bg-secondary-fixed/15 dark:text-secondary;
+    @apply inline-flex items-center bg-[#ebf5ff] px-xs py-[3px] font-label text-label-sm uppercase text-primary dark:bg-[rgba(0,122,255,0.16)] dark:text-primary;
   }
 }
 

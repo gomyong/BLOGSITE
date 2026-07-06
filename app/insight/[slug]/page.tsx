@@ -99,7 +99,7 @@ export default async function InsightPage({ params }: PageProps) {
               sizes="100vw"
               className="object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#141b2b]/50 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#1a1c1e]/50 to-transparent" />
           </div>
         )}
 
