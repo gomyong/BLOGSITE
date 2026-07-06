@@ -40,7 +40,7 @@ export default function AboutPage() {
         </p>
       </div>
 
-      <div className="mt-xl">
+      <div id="newsletter" className="mt-xl scroll-mt-24">
         <NewsletterForm
           title="함께 읽어요"
           description="매주 한 번, 그 주의 가장 중요한 인사이트를 요약해 메일함으로 보내드립니다."
