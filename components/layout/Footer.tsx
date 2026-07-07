@@ -11,10 +11,7 @@ const columns = [
   },
   {
     title: "Site",
-    links: [
-      { href: "/about", label: "About" },
-      { href: "/about#newsletter", label: "Newsletter" },
-    ],
+    links: [{ href: "/about", label: "About" }],
   },
   {
     title: "Meta",

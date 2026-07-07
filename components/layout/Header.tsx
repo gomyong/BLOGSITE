@@ -34,12 +34,6 @@ export default function Header() {
             ))}
           </nav>
           <ThemeToggle />
-          <Link
-            href="/about#newsletter"
-            className="hidden border border-on-surface bg-on-surface px-sm py-xs font-label text-label-sm text-surface transition-colors hover:border-accent hover:bg-accent hover:text-white sm:block"
-          >
-            뉴스레터 구독
-          </Link>
         </div>
       </div>
     </header>

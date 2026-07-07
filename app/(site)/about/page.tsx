@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import NewsletterForm from "@/components/layout/NewsletterForm";
 import { siteConfig } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -38,13 +37,6 @@ export default function AboutPage() {
           군더더기 없는 화면, 계산된 여백, 90도 직각의 구조적 그리드. 광고와
           노이즈 없이 콘텐츠 그 자체에 집중하는 읽기 경험을 지향합니다.
         </p>
-      </div>
-
-      <div id="newsletter" className="mt-xl scroll-mt-24">
-        <NewsletterForm
-          title="함께 읽어요"
-          description="매주 한 번, 그 주의 가장 중요한 인사이트를 요약해 메일함으로 보내드립니다."
-        />
       </div>
     </div>
   );

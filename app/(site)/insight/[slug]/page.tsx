@@ -6,7 +6,6 @@ import { MDXRemote } from "next-mdx-remote/rsc";
 import { ArrowLeft, ArrowRight, Clock } from "lucide-react";
 import { getAdjacentInsights, getInsightBySlug, getInsights } from "@/lib/mdx";
 import { mdxComponents } from "@/components/mdx/MdxComponents";
-import NewsletterForm from "@/components/layout/NewsletterForm";
 import ReadingProgress from "@/components/insight/ReadingProgress";
 import { formatDate } from "@/lib/utils";
 import { siteConfig } from "@/lib/site";
@@ -56,12 +55,6 @@ export default async function InsightPage({ params }: PageProps) {
   if (!insight) notFound();
 
   const { prev, next } = getAdjacentInsights(slug);
-
-  // 본문 30% 지점에 뉴스레터 폼 삽입 — 문단 단위로 분할
-  const paragraphs = insight.content.split("\n\n");
-  const splitIndex = Math.max(1, Math.floor(paragraphs.length * 0.3));
-  const firstPart = paragraphs.slice(0, splitIndex).join("\n\n");
-  const secondPart = paragraphs.slice(splitIndex).join("\n\n");
 
   // Article + NewsArticle JSON-LD (구글 리치 스니펫 대응)
   const jsonLd = {
@@ -128,13 +121,7 @@ export default async function InsightPage({ params }: PageProps) {
           </header>
 
           <div className="prose py-lg">
-            <MDXRemote source={firstPart} components={mdxComponents} />
-            <NewsletterForm
-              variant="compact"
-              title="여기까지 재미있게 읽으셨나요?"
-              description="이런 인사이트를 매주 메일함에서 받아보세요. 스팸 없이, 핵심만 보내드립니다."
-            />
-            <MDXRemote source={secondPart} components={mdxComponents} />
+            <MDXRemote source={insight.content} components={mdxComponents} />
           </div>
 
           {insight.tags.length > 0 && (
@@ -146,13 +133,6 @@ export default async function InsightPage({ params }: PageProps) {
               ))}
             </div>
           )}
-
-          <div className="mt-lg">
-            <NewsletterForm
-              title="뉴스레터 구독"
-              description="매주 한 번, 기술과 브랜드의 흐름을 짚어주는 인사이트를 메일함으로 보내드립니다."
-            />
-          </div>
 
           {/* 이전 글 / 다음 글 */}
           <nav className="grid gap-md border-t border-outline-variant py-lg sm:grid-cols-2 mt-lg">
