@@ -387,7 +387,7 @@ export default function Editor({ type, slug: initialSlug }: EditorProps) {
                     type="checkbox"
                     checked={featured}
                     onChange={(e) => setFeatured(e.target.checked)}
-                    className="h-4 w-4 accent-[#007aff]"
+                    className="h-4 w-4 accent-[#0d9488]"
                   />
                   <span className="text-body-md text-on-surface">
                     메인 대표글(Featured)로 노출

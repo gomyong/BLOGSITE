@@ -154,7 +154,7 @@ export default function Dashboard() {
           href="/studio/write?type=insight"
           className="group flex items-center gap-sm border border-outline-variant bg-surface-container-lowest p-md transition-colors hover:border-primary"
         >
-          <span className="flex h-9 w-9 items-center justify-center bg-[#ebf5ff] text-primary dark:bg-[rgba(0,122,255,0.16)]">
+          <span className="flex h-9 w-9 items-center justify-center bg-surface-container-low text-on-surface">
             <Plus size={18} />
           </span>
           <span>
@@ -170,7 +170,7 @@ export default function Dashboard() {
           href="/studio/write?type=brief"
           className="group flex items-center gap-sm border border-outline-variant bg-surface-container-lowest p-md transition-colors hover:border-primary"
         >
-          <span className="flex h-9 w-9 items-center justify-center bg-[#ebf5ff] text-primary dark:bg-[rgba(0,122,255,0.16)]">
+          <span className="flex h-9 w-9 items-center justify-center bg-surface-container-low text-on-surface">
             <MessageSquareText size={17} />
           </span>
           <span>

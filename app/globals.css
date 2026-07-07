@@ -3,52 +3,56 @@
 @tailwind utilities;
 
 /*
- * 색상 시스템 — 블루 액센트 기반
- *  key(primary): #007AFF · sub(container): #EBF5FF · bg(surface): #F8FAFC · tertiary(ink): #1A1C1E
+ * 색상 시스템 — 블랙 & 화이트 모노크롬 중심.
+ * 인터랙티브 요소는 잉크(near-black)로 통일하고, 키 컬러(청록 --accent)는
+ * 로고 도트 · 텍스트 선택 · 읽기 진행률 바 · 본문 링크 · 인용 바 등
+ * 아주 좁은 지점에만 절제해서 사용한다.
  */
 :root {
-  --surface: #f8fafc;
-  --surface-dim: #e2e8f0;
+  --surface: #ffffff;
+  --surface-dim: #ebebeb;
   --surface-container-lowest: #ffffff;
-  --surface-container-low: #f1f5f9;
-  --surface-container: #ebf5ff;
-  --surface-container-high: #e2eefc;
-  --surface-container-highest: #d6e6fa;
-  --on-surface: #1a1c1e;
-  --on-surface-variant: #52606d;
-  --outline: #8a97a5;
-  --outline-variant: #e2e8f0;
-  --primary: #007aff;
+  --surface-container-low: #f7f7f7;
+  --surface-container: #f1f1f1;
+  --surface-container-high: #ebebeb;
+  --surface-container-highest: #e4e4e4;
+  --on-surface: #121212;
+  --on-surface-variant: #5c5c5c;
+  --outline: #8f8f8f;
+  --outline-variant: #e4e4e4;
+  --primary: #121212;
   --on-primary: #ffffff;
-  --primary-container: #007aff;
-  --on-primary-container: #ebf5ff;
-  --secondary: #007aff;
-  --tertiary: #1a1c1e;
-  --inverse-surface: #1a1c1e;
-  --inverse-on-surface: #f8fafc;
+  --primary-container: #121212;
+  --on-primary-container: #ffffff;
+  --secondary: #5c5c5c;
+  --tertiary: #121212;
+  --inverse-surface: #121212;
+  --inverse-on-surface: #f7f7f7;
+  --accent: #0d9488; /* 청록 키 컬러 — 절제 사용 */
 }
 
-/* 다크 모드 — 동일 구조의 톤 반전 매핑 (링크·액센트는 밝은 블루) */
+/* 다크 모드 — 순수 모노크롬 반전, 액센트는 밝은 청록 */
 .dark {
-  --surface: #0f1216;
-  --surface-dim: #0a0d11;
-  --surface-container-lowest: #0b0e12;
-  --surface-container-low: #161a20;
-  --surface-container: #1b2028;
-  --surface-container-high: #222834;
-  --surface-container-highest: #2a3140;
-  --on-surface: #e6eaf0;
-  --on-surface-variant: #a6b0bd;
-  --outline: #8a97a5;
-  --outline-variant: #333b45;
-  --primary: #4da3ff;
-  --on-primary: #08213d;
-  --primary-container: #007aff;
-  --on-primary-container: #ebf5ff;
-  --secondary: #4da3ff;
-  --tertiary: #1a1c1e;
-  --inverse-surface: #e6eaf0;
-  --inverse-on-surface: #1a1c1e;
+  --surface: #0d0d0d;
+  --surface-dim: #090909;
+  --surface-container-lowest: #0a0a0a;
+  --surface-container-low: #161616;
+  --surface-container: #1c1c1c;
+  --surface-container-high: #232323;
+  --surface-container-highest: #2b2b2b;
+  --on-surface: #ededed;
+  --on-surface-variant: #a3a3a3;
+  --outline: #8f8f8f;
+  --outline-variant: #2e2e2e;
+  --primary: #ededed;
+  --on-primary: #121212;
+  --primary-container: #ededed;
+  --on-primary-container: #121212;
+  --secondary: #a3a3a3;
+  --tertiary: #ededed;
+  --inverse-surface: #ededed;
+  --inverse-on-surface: #121212;
+  --accent: #2dd4bf;
 }
 
 @layer base {
@@ -64,14 +68,15 @@
   }
 
   ::selection {
-    @apply bg-primary-container text-white;
+    background: var(--accent);
+    color: #ffffff;
   }
 }
 
 @layer components {
-  /* 사각 챕 라벨 — Geist, 대문자, 서브 컬러(#EBF5FF) 배경 + 키 컬러 텍스트 */
+  /* 사각 챕 라벨 — 모노크롬 아웃라인 스타일 */
   .chip {
-    @apply inline-flex items-center bg-[#ebf5ff] px-xs py-[3px] font-label text-label-sm uppercase text-primary dark:bg-[rgba(0,122,255,0.16)] dark:text-primary;
+    @apply inline-flex items-center border border-outline-variant bg-transparent px-xs py-[3px] font-label text-label-sm uppercase text-on-surface-variant;
   }
 }
 

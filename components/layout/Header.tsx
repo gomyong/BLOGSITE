@@ -15,9 +15,10 @@ export default function Header() {
       <div className="mx-auto flex h-16 max-w-container-max items-center justify-between px-[20px] md:px-lg">
         <Link
           href="/"
-          className="font-headline text-lg font-extrabold tracking-tight text-primary"
+          className="font-headline text-lg font-extrabold tracking-tight text-on-surface"
         >
           {siteConfig.name}
+          <span className="text-accent">.</span>
         </Link>
 
         <div className="flex items-center gap-3 sm:gap-md">
@@ -35,7 +36,7 @@ export default function Header() {
           <ThemeToggle />
           <Link
             href="/about#newsletter"
-            className="hidden border border-primary-container bg-primary-container px-sm py-xs font-label text-label-sm text-white transition-colors hover:border-primary hover:bg-primary sm:block"
+            className="hidden border border-on-surface bg-on-surface px-sm py-xs font-label text-label-sm text-surface transition-colors hover:border-accent hover:bg-accent hover:text-white sm:block"
           >
             뉴스레터 구독
           </Link>

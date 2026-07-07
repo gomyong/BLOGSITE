@@ -6,7 +6,7 @@ import type { MDXComponents } from "mdx/types";
 function CustomLink(props: React.AnchorHTMLAttributes<HTMLAnchorElement>) {
   const href = props.href ?? "";
   const className =
-    "font-medium text-primary underline decoration-2 underline-offset-4 hover:text-primary-container";
+    "font-medium text-accent underline decoration-2 underline-offset-4 hover:opacity-80";
   if (href.startsWith("/")) {
     return <Link href={href} {...props} className={className} />;
   }
@@ -47,7 +47,7 @@ function Blockquote(props: React.BlockquoteHTMLAttributes<HTMLQuoteElement>) {
   return (
     <blockquote
       {...props}
-      className="my-8 border-l-2 border-primary-container bg-surface-container-low py-sm pl-md pr-sm text-[15px] font-medium leading-relaxed text-on-surface-variant"
+      className="my-8 border-l-2 border-accent bg-surface-container-low py-sm pl-md pr-sm text-[15px] font-medium leading-relaxed text-on-surface-variant"
     />
   );
 }
