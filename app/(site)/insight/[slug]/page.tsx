@@ -26,6 +26,7 @@ export async function generateMetadata({
   if (!insight) return {};
 
   const url = `${siteConfig.url}/insight/${slug}`;
+  // og:image / twitter:image 는 opengraph-image.tsx 가 자동 생성한다.
   return {
     title: insight.title,
     description: insight.description,
@@ -38,13 +39,11 @@ export async function generateMetadata({
       publishedTime: insight.date,
       authors: [insight.author],
       tags: insight.tags,
-      images: insight.coverImage ? [{ url: insight.coverImage }] : undefined,
     },
     twitter: {
       card: "summary_large_image",
       title: insight.title,
       description: insight.description,
-      images: insight.coverImage ? [insight.coverImage] : undefined,
     },
   };
 }
