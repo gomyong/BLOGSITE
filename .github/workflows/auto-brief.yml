@@ -1,0 +1,67 @@
+name: Auto-Brief
+
+# 뉴스 RSS 수집 → Gemini 요약 → content/briefs 발행 → 커밋(→ Vercel 자동 재배포)
+
+on:
+  schedule:
+    # KST 07:30 / 12:30 / 18:30  (UTC 22:30 / 03:30 / 09:30)
+    - cron: "30 22 * * *"
+    - cron: "30 3 * * *"
+    - cron: "30 9 * * *"
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "발행 모드"
+        type: choice
+        options: [draft, publish]
+        default: draft
+      dry_run:
+        description: "커밋 없이 로그만 (true/false)"
+        type: boolean
+        default: false
+
+concurrency:
+  group: auto-brief
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install automation deps
+        working-directory: automation
+        run: npm install --no-audit --no-fund
+
+      - name: Generate briefs
+        id: gen
+        working-directory: automation
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL: ${{ vars.GEMINI_MODEL }}
+          AUTO_BRIEF_MODE: ${{ github.event.inputs.mode || 'draft' }}
+          CONFIDENCE_THRESHOLD: ${{ vars.CONFIDENCE_THRESHOLD }}
+          DRY_RUN: ${{ github.event.inputs.dry_run == 'true' && '1' || '' }}
+        run: node generate-briefs.mjs
+
+      - name: Commit & push
+        if: steps.gen.outputs.published != '0' && github.event.inputs.dry_run != 'true'
+        run: |
+          git config user.name "auto-brief-bot"
+          git config user.email "actions@github.com"
+          git add content/briefs automation/briefs-seen.json
+          if git diff --cached --quiet; then
+            echo "변경 없음 — 커밋 생략"
+          else
+            COUNT="${{ steps.gen.outputs.published }}"
+            git commit -m "bot: publish ${COUNT} brief(s) [$(date -u +%Y-%m-%dT%H:%MZ)]"
+            git push
+          fi

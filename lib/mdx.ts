@@ -27,6 +27,8 @@ export interface Brief {
   date: string;
   tags: string[];
   link?: string;
+  source?: string;
+  automated?: boolean;
   content: string;
   excerpt: string;
 }
@@ -127,6 +129,8 @@ export function getBriefs(): Brief[] {
             : String(data.date ?? "1970-01-01T00:00:00Z"),
         tags: data.tags ?? [],
         link: data.link,
+        source: data.source,
+        automated: data.automated ?? false,
         content,
         excerpt: extractExcerpt(content, 100),
       };

@@ -10,6 +10,7 @@ import {
   MessageSquareText,
   Pencil,
   Plus,
+  Send,
   Trash2,
 } from "lucide-react";
 import { formatDate, cn } from "@/lib/utils";
@@ -63,6 +64,17 @@ export default function Dashboard() {
     else alert("삭제에 실패했습니다.");
   }
 
+  async function handlePublish(post: PostItem) {
+    if (!confirm(`"${post.title}" 초안을 발행할까요?`)) return;
+    const res = await fetch(`/api/admin/posts/${post.type}/${post.slug}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "publish" }),
+    });
+    if (res.ok) load();
+    else alert("발행에 실패했습니다.");
+  }
+
   async function handleLogout() {
     await fetch("/api/admin/logout", { method: "POST" });
     router.refresh();
@@ -104,6 +116,16 @@ export default function Dashboard() {
                 {post.slug}
               </p>
             </div>
+            {post.draft && (
+              <button
+                type="button"
+                onClick={() => handlePublish(post)}
+                className="p-xs text-on-surface-variant transition-colors hover:text-accent"
+                title="초안 발행"
+              >
+                <Send size={15} />
+              </button>
+            )}
             <Link
               href={`/studio/write?type=${post.type}&slug=${post.slug}`}
               className="p-xs text-on-surface-variant transition-colors hover:text-primary"

@@ -22,15 +22,24 @@ export default function BriefItem({ brief }: { brief: Brief }) {
       <p className="mt-sm whitespace-pre-line text-body-md leading-relaxed text-on-surface">
         {brief.content.trim()}
       </p>
-      {brief.link && (
-        <a
-          href={brief.link}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-sm inline-flex items-center gap-1 font-label text-label-sm uppercase text-primary underline decoration-2 underline-offset-4 hover:text-primary-container"
-        >
-          원문 보기 <ArrowUpRight size={12} />
-        </a>
+      {(brief.link || brief.source) && (
+        <div className="mt-sm flex flex-wrap items-center gap-x-sm gap-y-xs">
+          {brief.link && (
+            <a
+              href={brief.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 font-label text-label-sm uppercase text-accent underline decoration-2 underline-offset-4 hover:opacity-80"
+            >
+              원문 보기 <ArrowUpRight size={12} />
+            </a>
+          )}
+          {brief.source && (
+            <span className="font-label text-label-sm text-on-surface-variant">
+              출처 · {brief.source}
+            </span>
+          )}
+        </div>
       )}
     </article>
   );

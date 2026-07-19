@@ -1,0 +1,14 @@
+{
+  "name": "blogsite-automation",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Auto-Brief pipeline — RSS 수집 → Gemini 요약 → Briefs 발행",
+  "scripts": {
+    "generate": "node generate-briefs.mjs"
+  },
+  "dependencies": {
+    "js-yaml": "^4.1.0",
+    "rss-parser": "^3.13.0"
+  }
+}
