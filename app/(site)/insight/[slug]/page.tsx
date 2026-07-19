@@ -62,12 +62,25 @@ export default async function InsightPage({ params }: PageProps) {
     headline: insight.title,
     description: insight.description,
     datePublished: insight.date,
-    author: { "@type": "Person", name: insight.author },
-    publisher: { "@type": "Organization", name: siteConfig.name },
-    image: insight.coverImage
-      ? [`${siteConfig.url}${insight.coverImage}`]
-      : undefined,
+    dateModified: insight.updated,
+    author: {
+      "@type": "Person",
+      name: insight.author,
+      url: `${siteConfig.url}/about`,
+    },
+    publisher: {
+      "@type": "Organization",
+      "@id": `${siteConfig.url}/#organization`,
+      name: siteConfig.name,
+      logo: {
+        "@type": "ImageObject",
+        url: `${siteConfig.url}${siteConfig.logo}`,
+      },
+    },
+    // 소셜 미리보기와 동일한 자동 생성 OG 이미지를 대표 이미지로 사용
+    image: [`${siteConfig.url}/insight/${slug}/opengraph-image`],
     mainEntityOfPage: `${siteConfig.url}/insight/${slug}`,
+    inLanguage: "ko-KR",
     keywords: insight.tags.join(", "),
   };
 

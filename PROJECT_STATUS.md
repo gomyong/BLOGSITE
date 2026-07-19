@@ -57,15 +57,15 @@
 
 ## 3. 앞으로 할 일 (Backlog) 📋
 
-### A. 코드로 개선 가능 — SEO/AEO 강화 (진행 중)
+### A. 코드로 개선 가능 — SEO/AEO 강화 (완료 ✅)
 | # | 항목 | 상태 | 비고 |
 |---|---|---|---|
-| A1 | 동적 OG 이미지 생성 (`ImageResponse`) | ⬜ 예정 | SVG는 소셜 미리보기 안 뜸 → PNG 자동 생성 |
-| A2 | 검색엔진 소유권 확인 태그 (env 기반) | ⬜ 예정 | Google / 네이버 verification |
-| A3 | AEO 엔티티 강화 (Organization/Person schema, `sameAs`, 로고) | ⬜ 예정 | AI 답변엔진 신뢰 신호 |
-| A4 | `dateModified` 추가 | ⬜ 예정 | 최신성 신호 |
-| A5 | `llms.txt` 생성 | ⬜ 예정 | AI 크롤러 관례 파일 |
-| A6 | 사이트 RSS 피드 (`/feed.xml`) | ⬜ 예정 | 배포 채널 + AEO |
+| A1 | 동적 OG 이미지 생성 (`ImageResponse`) | ✅ 완료 | 홈 + 아티클별 PNG 자동 생성, 한글 렌더 |
+| A2 | 검색엔진 소유권 확인 태그 (env 기반) | ✅ 완료 | `NEXT_PUBLIC_GOOGLE/NAVER_VERIFICATION` |
+| A3 | AEO 엔티티 강화 (Organization/WebSite schema, `sameAs`, 로고) | ✅ 완료 | 사이트 전역 JSON-LD @graph |
+| A4 | `dateModified` 추가 | ✅ 완료 | frontmatter `updated`, 기본은 date |
+| A5 | `llms.txt` 생성 | ✅ 완료 | `/llms.txt` (최신 글 목록 포함) |
+| A6 | 사이트 RSS 피드 (`/feed.xml`) | ✅ 완료 | RSS 2.0 + head alternate 링크 |
 
 ### B. 사용자 액션 필요 (코드 아님)
 | # | 항목 | 비고 |

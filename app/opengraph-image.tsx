@@ -26,7 +26,7 @@ export default async function Image() {
         }}
       >
         <div style={{ display: "flex", fontSize: 30, letterSpacing: 4 }}>
-          <div style={{ opacity: 0.6 }}>TECH+DESIGN</div>
+          <div style={{ opacity: 0.6 }}>{siteConfig.name}</div>
           <div style={{ color: "#2dd4bf" }}>.</div>
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
