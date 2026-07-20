@@ -93,24 +93,21 @@ export default async function InsightPage({ params }: PageProps) {
       />
 
       <article>
-        {/* 화면 꽉 차는 고화질 커버 이미지 — 흑백에서 컬러로 서서히 전환 */}
-        {insight.coverImage && (
-          <div className="relative h-[45vh] w-full border-b border-outline-variant sm:h-[55vh]">
-            <Image
-              src={insight.coverImage}
-              alt={insight.title}
-              fill
-              priority
-              sizes="100vw"
-              className="object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#1a1c1e]/50 to-transparent" />
-          </div>
-        )}
-
-        {/* Reading Rail — 본문 최대 너비 720px 제한 */}
-        <div className="mx-auto max-w-content-max px-[20px] md:px-lg">
-          <header className="border-b border-outline-variant pb-lg pt-lg">
+        {/* Reading Rail — 본문 최대 너비 720px 제한. 커버 이미지도 이 폭에 맞춘다 */}
+        <div className="mx-auto max-w-content-max px-[20px] pt-lg md:px-lg">
+          {insight.coverImage && (
+            <div className="relative mb-lg aspect-video w-full overflow-hidden border border-outline-variant">
+              <Image
+                src={insight.coverImage}
+                alt={insight.title}
+                fill
+                priority
+                sizes="(max-width: 768px) 100vw, 720px"
+                className="object-cover"
+              />
+            </div>
+          )}
+          <header className="border-b border-outline-variant pb-lg">
             <div className="flex flex-wrap items-center gap-xs">
               <span className="chip">{insight.category}</span>
               <span className="flex items-center gap-1 font-label text-label-sm text-on-surface-variant">
