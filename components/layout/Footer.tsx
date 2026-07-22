@@ -5,13 +5,16 @@ const columns = [
   {
     title: "Content",
     links: [
-      { href: "/", label: "Insights" },
+      { href: "/", label: "Articles" },
       { href: "/briefs", label: "Briefs" },
     ],
   },
   {
     title: "Site",
-    links: [{ href: "/about", label: "About" }],
+    links: [
+      { href: "/shop", label: "Shop" },
+      { href: "/about", label: "About" },
+    ],
   },
   {
     title: "Meta",

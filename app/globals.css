@@ -74,9 +74,21 @@
 }
 
 @layer components {
-  /* 사각 챕 라벨 — 모노크롬 아웃라인 스타일 */
+  /* CLIP 스타일 태그 — 라운드 pill 아웃라인 + 앞에 작은 점(●) */
   .chip {
-    @apply inline-flex items-center border border-outline-variant bg-transparent px-xs py-[3px] font-label text-label-sm uppercase text-on-surface-variant;
+    @apply inline-flex items-center gap-1 rounded-full border border-outline-variant bg-transparent px-[10px] py-[3px] font-label text-[11px] font-medium normal-case tracking-normal text-on-surface-variant;
+  }
+  .chip::before {
+    content: "";
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    border-radius: 9999px;
+    background: var(--accent);
+  }
+  /* 점 없는 대문자 라벨 변형 (기존 사각 라벨이 필요한 곳) */
+  .chip-plain::before {
+    display: none;
   }
 }
 
@@ -89,5 +101,24 @@
   }
   .scrollbar-thin::-webkit-scrollbar-track {
     background: transparent;
+  }
+
+  /* 스크롤 진입 애니메이션 (CLIP 모션 참고) */
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
   }
 }

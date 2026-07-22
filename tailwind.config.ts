@@ -13,17 +13,17 @@ const config: Config = {
     "./content/**/*.mdx",
   ],
   theme: {
-    // 셰이프 언어: 전면 Sharp(0px) — 모든 rounded-* 유틸을 0으로 고정
+    // 셰이프 언어: CLIP 참고 — 부드러운 라운드 (카드/버튼 둥글게, 태그·CTA는 pill)
     borderRadius: {
       none: "0",
-      sm: "0",
-      DEFAULT: "0",
-      md: "0",
-      lg: "0",
-      xl: "0",
-      "2xl": "0",
-      "3xl": "0",
-      full: "0",
+      sm: "8px",
+      DEFAULT: "12px",
+      md: "16px",
+      lg: "22px",
+      xl: "30px",
+      "2xl": "40px",
+      "3xl": "52px",
+      full: "9999px",
     },
     extend: {
       colors: {

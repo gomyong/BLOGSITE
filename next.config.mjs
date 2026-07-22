@@ -11,6 +11,7 @@ const nextConfig = {
     "/briefs": ["./content/**/*"],
     "/api/admin/posts": ["./content/**/*"],
     "/api/admin/posts/[type]/[slug]": ["./content/**/*"],
+    "/api/checkout": ["./content/**/*"],
   },
 };
 

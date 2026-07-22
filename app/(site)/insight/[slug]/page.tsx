@@ -5,8 +5,10 @@ import type { Metadata } from "next";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { ArrowLeft, ArrowRight, Clock } from "lucide-react";
 import { getAdjacentInsights, getInsightBySlug, getInsights } from "@/lib/mdx";
+import { getProductsForArticle } from "@/lib/products";
 import { mdxComponents } from "@/components/mdx/MdxComponents";
 import ReadingProgress from "@/components/insight/ReadingProgress";
+import ProductCard from "@/components/shop/ProductCard";
 import { formatDate } from "@/lib/utils";
 import { siteConfig } from "@/lib/site";
 
@@ -54,6 +56,7 @@ export default async function InsightPage({ params }: PageProps) {
   if (!insight) notFound();
 
   const { prev, next } = getAdjacentInsights(slug);
+  const relatedProducts = getProductsForArticle(slug);
 
   // Article + NewsArticle JSON-LD (구글 리치 스니펫 대응)
   const jsonLd = {
@@ -137,9 +140,23 @@ export default async function InsightPage({ params }: PageProps) {
             <div className="flex flex-wrap gap-xs">
               {insight.tags.map((tag) => (
                 <span key={tag} className="chip">
-                  #{tag}
+                  {tag}
                 </span>
               ))}
+            </div>
+          )}
+
+          {/* 연계 상품 (편집샵) */}
+          {relatedProducts.length > 0 && (
+            <div className="mt-xl border-t border-outline-variant pt-lg">
+              <h2 className="font-headline text-[18px] font-extrabold tracking-tight text-on-surface">
+                이 글과 연결된 물건
+              </h2>
+              <div className="mt-md grid grid-cols-2 gap-3">
+                {relatedProducts.map((p) => (
+                  <ProductCard key={p.slug} product={p} />
+                ))}
+              </div>
             </div>
           )}
 
