@@ -27,7 +27,7 @@ export default function FeaturedHero({ insight }: { insight: InsightMeta }) {
             <h2 className="font-headline text-[26px] font-extrabold leading-[1.15] tracking-tight text-white sm:text-[34px]">
               {insight.title}
             </h2>
-            <p className="mt-sm max-w-md text-[14px] leading-relaxed text-white/80">
+            <p className="mt-sm max-w-md text-[14px] leading-relaxed text-white/90">
               {insight.description}
             </p>
             <span className="mt-md inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-[13px] font-semibold text-black transition-transform group-hover:translate-x-0.5">
