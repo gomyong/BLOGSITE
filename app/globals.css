@@ -129,3 +129,36 @@
     }
   }
 }
+
+/* TipTap(ProseMirror) 스튜디오 에디터 */
+.ProseMirror {
+  min-height: 50vh;
+}
+.ProseMirror:focus {
+  outline: none;
+}
+/* 빈 첫 단락에 플레이스홀더 노출 */
+.ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+  color: var(--outline-variant);
+}
+/* 본문 이미지/구분선 편집 시 스타일 */
+.ProseMirror img {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid var(--outline-variant);
+}
+.ProseMirror img.ProseMirror-selectednode {
+  outline: 2px solid var(--accent);
+}
+.ProseMirror hr {
+  border: none;
+  border-top: 1px solid var(--outline-variant);
+  margin: 1.5rem 0;
+}
+.ProseMirror hr.ProseMirror-selectednode {
+  border-top-color: var(--accent);
+}

@@ -25,6 +25,8 @@ export function extractExcerpt(markdown: string, length = 100) {
     .replace(/```[\s\S]*?```/g, "")
     .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
     .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1")
+    // 에디터가 남기는 인라인 HTML(<u>, 글자색 <span style=…>) 태그 제거
+    .replace(/<[^>]+>/g, "")
     .replace(/[#>*_`~-]/g, "")
     .replace(/\s+/g, " ")
     .trim();

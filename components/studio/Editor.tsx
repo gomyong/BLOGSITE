@@ -1,62 +1,24 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
   Check,
-  Eye,
   ImagePlus,
   Loader2,
-  Pencil,
   Settings2,
   X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import RichEditor from "./RichEditor";
 
 type PostType = "insight" | "brief";
 
 interface EditorProps {
   type: PostType;
   slug?: string; // 있으면 수정 모드
-}
-
-/** 미리보기용 초경량 마크다운 렌더러 (헤딩/굵게/기울임/링크/이미지/인용/코드/리스트) */
-function renderMarkdown(md: string): string {
-  const escape = (s: string) =>
-    s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-  const blocks = md.trim().split(/\n\n+/);
-  return blocks
-    .map((block) => {
-      if (/^```/.test(block)) {
-        const code = block.replace(/^```[^\n]*\n?/, "").replace(/\n?```$/, "");
-        return `<pre><code>${escape(code)}</code></pre>`;
-      }
-      let b = escape(block);
-      // 인라인 요소
-      b = b
-        .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" />')
-        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>')
-        .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
-        .replace(/\*([^*]+)\*/g, "<em>$1</em>")
-        .replace(/`([^`]+)`/g, "<code>$1</code>");
-      if (/^###\s/.test(b)) return `<h4>${b.replace(/^###\s*/, "")}</h4>`;
-      if (/^##\s/.test(b)) return `<h3>${b.replace(/^##\s*/, "")}</h3>`;
-      if (/^#\s/.test(b)) return `<h2>${b.replace(/^#\s*/, "")}</h2>`;
-      if (/^&gt;\s?/.test(b))
-        return `<blockquote>${b.replace(/^&gt;\s?/gm, "")}</blockquote>`;
-      if (/^[-*]\s/m.test(b)) {
-        const items = b
-          .split("\n")
-          .filter((l) => /^[-*]\s/.test(l))
-          .map((l) => `<li>${l.replace(/^[-*]\s*/, "")}</li>`)
-          .join("");
-        return `<ul>${items}</ul>`;
-      }
-      return `<p>${b.replace(/\n/g, "<br/>")}</p>`;
-    })
-    .join("\n");
 }
 
 function defaultSlug(type: PostType) {
@@ -82,12 +44,10 @@ export default function Editor({ type, slug: initialSlug }: EditorProps) {
   const router = useRouter();
   const isEdit = Boolean(initialSlug);
   const fileInput = useRef<HTMLInputElement>(null);
-  const bodyRef = useRef<HTMLTextAreaElement>(null);
 
   const [loading, setLoading] = useState(isEdit);
   const [saving, setSaving] = useState<false | "draft" | "publish">(false);
   const [message, setMessage] = useState("");
-  const [preview, setPreview] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [uploading, setUploading] = useState(false);
 
@@ -130,17 +90,7 @@ export default function Editor({ type, slug: initialSlug }: EditorProps) {
     })();
   }, [isEdit, initialSlug, type]);
 
-  // 본문 textarea 자동 높이
-  const autoGrow = useCallback(() => {
-    const el = bodyRef.current;
-    if (!el) return;
-    el.style.height = "auto";
-    el.style.height = `${el.scrollHeight}px`;
-  }, []);
-  useEffect(() => {
-    autoGrow();
-  }, [content, preview, loading, autoGrow]);
-
+  /** 파일을 업로드하고 저장된 경로를 반환한다 (RichEditor / 커버 공용) */
   async function uploadImage(file: File): Promise<string | null> {
     setUploading(true);
     try {
@@ -237,8 +187,8 @@ export default function Editor({ type, slug: initialSlug }: EditorProps) {
 
   return (
     <div className="mx-auto max-w-content-max px-[20px] pb-section md:px-lg">
-      {/* 에디터 툴바 */}
-      <div className="sticky top-14 z-30 -mx-[20px] flex items-center gap-xs border-b border-outline-variant bg-surface/90 px-[20px] py-xs backdrop-blur-md md:-mx-lg md:px-lg">
+      {/* 액션 바 (목록 / 설정 / 저장 / 발행) */}
+      <div className="sticky top-14 z-30 -mx-[20px] flex h-12 items-center gap-xs border-b border-outline-variant bg-surface/95 px-[20px] backdrop-blur-md md:-mx-lg md:px-lg">
         <button
           type="button"
           onClick={() => router.push("/studio")}
@@ -251,19 +201,6 @@ export default function Editor({ type, slug: initialSlug }: EditorProps) {
           {isEdit ? " · 수정" : ""}
         </span>
         <div className="ml-auto flex items-center gap-xs">
-          <button
-            type="button"
-            onClick={() => setPreview(!preview)}
-            className={cn(
-              "flex items-center gap-1 px-xs py-[5px] font-label text-label-sm transition-colors",
-              preview
-                ? "bg-on-surface text-surface"
-                : "text-on-surface-variant hover:text-primary"
-            )}
-          >
-            {preview ? <Pencil size={13} /> : <Eye size={13} />}
-            {preview ? "편집" : "미리보기"}
-          </button>
           <button
             type="button"
             onClick={() => setShowSettings(!showSettings)}
@@ -412,7 +349,7 @@ export default function Editor({ type, slug: initialSlug }: EditorProps) {
       )}
 
       {/* 커버 이미지 (인사이트 전용) */}
-      {type === "insight" && !preview && (
+      {type === "insight" && (
         <div className="mt-lg">
           <input
             ref={fileInput}
@@ -456,46 +393,46 @@ export default function Editor({ type, slug: initialSlug }: EditorProps) {
         </div>
       )}
 
-      {preview ? (
-        /* 미리보기 — 실제 아티클과 동일한 prose 스타일 */
-        <article className="mt-lg">
-          {type === "insight" && (
-            <h1 className="font-headline text-2xl font-extrabold leading-tight tracking-tight text-on-surface sm:text-display">
-              {title || "제목 없음"}
-            </h1>
-          )}
-          <div
-            className="prose mt-md"
-            dangerouslySetInnerHTML={{ __html: renderMarkdown(content) }}
-          />
-        </article>
-      ) : (
-        /* 편집 모드 — Medium/브런치 스타일 무테두리 입력 */
+      {/* 제목 (인사이트 전용) */}
+      {type === "insight" && (
         <div className="mt-lg">
-          {type === "insight" && (
-            <textarea
-              value={title}
-              onChange={(e) => setTitle(e.target.value.replace(/\n/g, ""))}
-              placeholder="제목을 입력하세요"
-              rows={1}
-              className="w-full resize-none border-none bg-transparent font-headline text-2xl font-extrabold leading-tight tracking-tight text-on-surface outline-none placeholder:text-outline-variant sm:text-display"
-              onInput={(e) => {
-                const el = e.currentTarget;
-                el.style.height = "auto";
-                el.style.height = `${el.scrollHeight}px`;
-              }}
-            />
-          )}
           <textarea
-            ref={bodyRef}
+            value={title}
+            onChange={(e) => setTitle(e.target.value.replace(/\n/g, ""))}
+            placeholder="제목을 입력하세요"
+            rows={1}
+            className="w-full resize-none border-none bg-transparent font-headline text-2xl font-extrabold leading-tight tracking-tight text-on-surface outline-none placeholder:text-outline-variant sm:text-display"
+            onInput={(e) => {
+              const el = e.currentTarget;
+              el.style.height = "auto";
+              el.style.height = `${el.scrollHeight}px`;
+            }}
+          />
+        </div>
+      )}
+
+      {/* 본문 — 인사이트는 리치 에디터, 브리프는 간단 텍스트 */}
+      {type === "insight" ? (
+        <div className="mt-md">
+          <RichEditor
+            value={content}
+            onChange={setContent}
+            uploadImage={uploadImage}
+            placeholder="이야기를 시작하세요…  상단 도구모음으로 제목·굵게·인용·이미지 등을 넣을 수 있어요."
+          />
+        </div>
+      ) : (
+        <div className="mt-lg">
+          <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            placeholder={
-              type === "insight"
-                ? "이야기를 시작하세요…\n\n## 소제목\n**굵게**, *기울임*, > 인용, - 리스트, [링크](url) 를 쓸 수 있습니다."
-                : "짧은 단신을 입력하세요. 제목 없이 본문만 쓰면 됩니다."
-            }
-            className="mt-md min-h-[50vh] w-full resize-none border-none bg-transparent text-[15px] leading-[1.9] text-on-surface outline-none placeholder:text-outline-variant"
+            placeholder="짧은 단신을 입력하세요. 제목 없이 본문만 쓰면 됩니다."
+            className="min-h-[40vh] w-full resize-none border-none bg-transparent text-[15px] leading-[1.9] text-on-surface outline-none placeholder:text-outline-variant"
+            onInput={(e) => {
+              const el = e.currentTarget;
+              el.style.height = "auto";
+              el.style.height = `${el.scrollHeight}px`;
+            }}
           />
         </div>
       )}

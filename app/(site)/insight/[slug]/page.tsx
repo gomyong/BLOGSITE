@@ -2,11 +2,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { MDXRemote } from "next-mdx-remote/rsc";
 import { ArrowLeft, ArrowRight, Clock } from "lucide-react";
 import { getAdjacentInsights, getInsightBySlug, getInsights } from "@/lib/mdx";
 import { getProductsForArticle } from "@/lib/products";
-import { mdxComponents } from "@/components/mdx/MdxComponents";
+import MarkdownContent from "@/components/mdx/MarkdownContent";
 import ReadingProgress from "@/components/insight/ReadingProgress";
 import ProductCard from "@/components/shop/ProductCard";
 import { formatDate } from "@/lib/utils";
@@ -135,7 +134,7 @@ export default async function InsightPage({ params }: PageProps) {
           </header>
 
           <div className="prose py-lg">
-            <MDXRemote source={insight.content} components={mdxComponents} />
+            <MarkdownContent source={insight.content} />
           </div>
 
           {insight.tags.length > 0 && (
