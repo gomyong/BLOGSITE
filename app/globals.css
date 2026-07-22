@@ -90,6 +90,13 @@
   .chip-plain::before {
     display: none;
   }
+  /* 컬러(accent) 배경 위에 올리는 흰색 태그 변형 */
+  .chip-on-accent {
+    @apply border-white/40 text-white/85;
+  }
+  .chip-on-accent::before {
+    background: #ffffff;
+  }
 }
 
 @layer utilities {

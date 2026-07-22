@@ -1,16 +1,16 @@
 import { getInsights } from "@/lib/mdx";
 import { getFeaturedProducts } from "@/lib/products";
+import { siteConfig } from "@/lib/site";
 import FeaturedHero from "@/components/insight/FeaturedHero";
 import HomeFeed from "@/components/insight/HomeFeed";
 import ShopBand from "@/components/shop/ShopBand";
-import CtaBand from "@/components/layout/CtaBand";
 import Reveal from "@/components/ui/Reveal";
 
 export default function HomePage() {
   const all = getInsights().map(({ content: _c, ...meta }) => meta);
   const hero = all.find((i) => i.featured) ?? all[0];
   const rest = all.filter((i) => i.slug !== hero?.slug);
-  const products = getFeaturedProducts(3);
+  const products = siteConfig.shopEnabled ? getFeaturedProducts(3) : [];
 
   return (
     <div className="mx-auto max-w-container-max space-y-xl px-[20px] py-lg md:px-lg">
@@ -38,21 +38,12 @@ export default function HomePage() {
         </Reveal>
       </section>
 
-      {/* 편집샵 밴드 */}
-      <Reveal>
-        <ShopBand products={products} />
-      </Reveal>
-
-      {/* CTA 밴드 */}
-      <Reveal>
-        <CtaBand
-          eyebrow="Newsletter"
-          title="다음 이야기를 놓치지 마세요"
-          description="새 아티클과 편집샵 소식을 가장 먼저 받아보세요."
-          href="/about"
-          cta="더 알아보기"
-        />
-      </Reveal>
+      {/* Shop 밴드 (shopEnabled일 때만) */}
+      {siteConfig.shopEnabled && products.length > 0 && (
+        <Reveal>
+          <ShopBand products={products} />
+        </Reveal>
+      )}
     </div>
   );
 }

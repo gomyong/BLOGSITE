@@ -18,21 +18,19 @@ export default function FeaturedHero({ insight }: { insight: InsightMeta }) {
         {/* 텍스트 */}
         <div className="flex flex-col justify-between p-lg sm:p-xl">
           <div className="flex flex-wrap items-center gap-1.5">
-            <span className="chip border-black/25 text-black/70">
-              {insight.category}
-            </span>
-            <span className="chip border-black/25 text-black/70">
+            <span className="chip chip-on-accent">{insight.category}</span>
+            <span className="chip chip-on-accent">
               {formatDate(insight.date)}
             </span>
           </div>
           <div className="mt-lg">
-            <h2 className="font-headline text-[26px] font-extrabold leading-[1.15] tracking-tight text-black sm:text-[34px]">
+            <h2 className="font-headline text-[26px] font-extrabold leading-[1.15] tracking-tight text-white sm:text-[34px]">
               {insight.title}
             </h2>
-            <p className="mt-sm max-w-md text-[14px] leading-relaxed text-black/70">
+            <p className="mt-sm max-w-md text-[14px] leading-relaxed text-white/80">
               {insight.description}
             </p>
-            <span className="mt-md inline-flex items-center gap-1.5 rounded-full bg-black px-4 py-2 text-[13px] font-semibold text-white transition-transform group-hover:translate-x-0.5">
+            <span className="mt-md inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-[13px] font-semibold text-black transition-transform group-hover:translate-x-0.5">
               기사 읽기 <ArrowRight size={15} />
             </span>
           </div>

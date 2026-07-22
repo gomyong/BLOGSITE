@@ -39,6 +39,7 @@ export async function generateMetadata({
 }
 
 export default async function ProductPage({ params }: PageProps) {
+  if (!siteConfig.shopEnabled) notFound();
   const { slug } = await params;
   const product = getProductBySlug(slug);
   if (!product) notFound();
@@ -76,7 +77,7 @@ export default async function ProductPage({ params }: PageProps) {
         href="/shop"
         className="inline-flex items-center gap-1 text-[13px] font-medium text-on-surface-variant hover:text-on-surface"
       >
-        <ArrowLeft size={14} /> 편집샵
+        <ArrowLeft size={14} /> Shop
       </Link>
 
       <div className="mt-md grid gap-lg md:grid-cols-2">

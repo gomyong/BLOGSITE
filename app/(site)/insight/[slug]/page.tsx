@@ -56,7 +56,9 @@ export default async function InsightPage({ params }: PageProps) {
   if (!insight) notFound();
 
   const { prev, next } = getAdjacentInsights(slug);
-  const relatedProducts = getProductsForArticle(slug);
+  const relatedProducts = siteConfig.shopEnabled
+    ? getProductsForArticle(slug)
+    : [];
 
   // Article + NewsArticle JSON-LD (구글 리치 스니펫 대응)
   const jsonLd = {

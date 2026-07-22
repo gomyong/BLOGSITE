@@ -11,7 +11,7 @@ export default function ShopBand({ products }: { products: Product[] }) {
       <div className="mb-lg flex items-end justify-between px-1">
         <div>
           <h2 className="font-headline text-[22px] font-extrabold tracking-tight text-inverse-on-surface">
-            편집샵
+            Shop
           </h2>
           <p className="mt-1 text-[13px] text-inverse-on-surface/60">
             아티클과 연결된, 우리가 직접 고른 물건들

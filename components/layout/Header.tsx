@@ -5,7 +5,7 @@ import { siteConfig } from "@/lib/site";
 const navItems = [
   { href: "/", label: "Articles" },
   { href: "/briefs", label: "Briefs" },
-  { href: "/shop", label: "Shop" },
+  ...(siteConfig.shopEnabled ? [{ href: "/shop", label: "Shop" }] : []),
   { href: "/about", label: "About" },
 ];
 

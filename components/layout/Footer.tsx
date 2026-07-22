@@ -12,7 +12,7 @@ const columns = [
   {
     title: "Site",
     links: [
-      { href: "/shop", label: "Shop" },
+      ...(siteConfig.shopEnabled ? [{ href: "/shop", label: "Shop" }] : []),
       { href: "/about", label: "About" },
     ],
   },

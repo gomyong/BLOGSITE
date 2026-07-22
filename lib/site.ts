@@ -11,4 +11,9 @@ export const siteConfig = {
   logo: "/opengraph-image",
   /** 소유 SNS·프로필 URL — 채우면 Organization schema의 sameAs로 연결됨 */
   sameAs: [] as string[],
+  /**
+   * Shop(판매) 기능 온/오프. 기본 off — 상품이 준비되면 Vercel 환경변수
+   * NEXT_PUBLIC_SHOP_ENABLED=true 로 켠다. 끄면 Shop 관련 페이지·링크가 모두 숨겨진다.
+   */
+  shopEnabled: process.env.NEXT_PUBLIC_SHOP_ENABLED === "true",
 };
