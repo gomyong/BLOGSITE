@@ -95,12 +95,14 @@ export async function POST(request: Request) {
   const title = (fm.title as string) ?? slug;
   await writeFile(filePath, mdx, `studio: publish ${type} "${title}"`);
 
-  // 슬러그가 바뀐 수정이면 이전 파일 제거
-  if (body.previousSlug && body.previousSlug !== slug) {
+  // 슬러그가 바뀐 수정이면 이전 파일 제거 — previousSlug도 동일한 형식 검증 필요
+  // (검증 없이 경로에 그대로 쓰면 "../" 등으로 저장소의 다른 파일을 지울 수 있음)
+  const previousSlug = (body.previousSlug ?? "").trim();
+  if (previousSlug && /^[a-z0-9-]+$/.test(previousSlug) && previousSlug !== slug) {
     const { deleteFile } = await import("@/lib/contentStore");
     await deleteFile(
-      `${DIRS[type]}/${body.previousSlug}.mdx`,
-      `studio: rename ${body.previousSlug} -> ${slug}`
+      `${DIRS[type]}/${previousSlug}.mdx`,
+      `studio: rename ${previousSlug} -> ${slug}`
     );
   }
 
