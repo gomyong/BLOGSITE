@@ -18,14 +18,6 @@ sources:
     feed: https://deepmind.google/blog/rss.xml
     tags: [AI, Google]
     lang: en
-  - name: X (문샷 팩토리)
-    feed: https://blog.x.company/feed
-    tags: [Tech, Moonshot]
-    lang: en
-  - name: Anthropic
-    feed: https://www.anthropic.com/rss.xml
-    tags: [AI, Anthropic]
-    lang: en
   - name: OpenAI
     feed: https://openai.com/news/rss.xml
     tags: [AI, OpenAI]
@@ -58,10 +50,6 @@ sources:
     feed: https://www.designboom.com/feed/
     tags: [Design]
     lang: en
-  - name: 아이즈매거진
-    feed: https://www.eyesmag.com/rss
-    tags: [Brand, Culture]
-    lang: ko
   - name: 루리웹 게임뉴스
     feed: https://bbs.ruliweb.com/news/rss
     tags: [Game]

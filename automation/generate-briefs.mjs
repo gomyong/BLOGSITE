@@ -163,6 +163,22 @@ function writeBrief({ iso, dateStr, slug, tags, link, source, summary, draft }) 
 }
 
 async function main() {
+  // [임시 진단] 이 API 키로 generateContent 가능한 모델 목록 출력 후 확인되면 제거
+  if (API_KEY) {
+    try {
+      const mres = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models?key=${API_KEY}&pageSize=200`
+      );
+      const mjson = await mres.json();
+      const names = (mjson.models || [])
+        .filter((m) => (m.supportedGenerationMethods || []).includes("generateContent"))
+        .map((m) => m.name);
+      console.log("★ 사용 가능 모델:", JSON.stringify(names));
+    } catch (e) {
+      console.log("★ 모델 목록 조회 실패:", e.message);
+    }
+  }
+
   const cfg = yaml.load(fs.readFileSync(SOURCES_FILE, "utf-8"));
   const filters = cfg.filters || {};
   const includeKw = (filters.include_keywords || []).map((k) => k.toLowerCase());
