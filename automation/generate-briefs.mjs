@@ -229,6 +229,7 @@ async function main() {
   const newlySeen = [];
   let published = 0;
 
+  let quotaBlocked = 0; // 연속 429(할당량 초과) 횟수
   for (let i = 0; i < toProcess.length; i++) {
     const c = toProcess[i];
     // 분당 요청 한도(rate limit)를 넘지 않도록 요청 사이에 간격을 둔다.
@@ -245,8 +246,14 @@ async function main() {
               sourceName: c.source.name,
               lang: c.source.lang || "ko",
             });
+      quotaBlocked = 0;
     } catch (e) {
       console.warn(`  ⚠ 요약 실패: ${e.message} → 스킵 (다음 실행에서 재시도)`);
+      // 일일 할당량이 소진되면 남은 후보도 모두 429이므로 조기 종료해 시간을 아낀다.
+      if (String(e.message).includes("429") && ++quotaBlocked >= 3) {
+        console.warn("⚠ 연속 429(할당량 초과) — 이번 실행 조기 종료");
+        break;
+      }
       continue; // seen에 넣지 않음 → 다음 실행 재시도
     }
 
