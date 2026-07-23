@@ -4,10 +4,10 @@ name: Auto-Brief
 
 on:
   schedule:
-    # KST 07:30 / 12:30 / 18:30  (UTC 22:30 / 03:30 / 09:30)
-    - cron: "30 22 * * *"
-    - cron: "30 3 * * *"
-    - cron: "30 9 * * *"
+    # KST 07:00 / 16:00 / 22:00  (UTC 22:00 / 07:00 / 13:00)
+    - cron: "0 22 * * *"
+    - cron: "0 7 * * *"
+    - cron: "0 13 * * *"
   workflow_dispatch:
     inputs:
       mode:

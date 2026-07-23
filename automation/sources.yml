@@ -55,6 +55,20 @@ sources:
     tags: [Game]
     lang: ko
 
+  # ── 오픈액세스 논문 (arXiv, 초록 기준 요약) ──
+  - name: arXiv AI
+    feed: https://rss.arxiv.org/rss/cs.AI
+    tags: [논문, AI]
+    lang: en
+  - name: arXiv 머신러닝
+    feed: https://rss.arxiv.org/rss/cs.LG
+    tags: [논문, AI]
+    lang: en
+  - name: arXiv 자연어처리
+    feed: https://rss.arxiv.org/rss/cs.CL
+    tags: [논문, AI]
+    lang: en
+
 # 필터 — 관심 주제와 수집량 제어
 filters:
   # 제목/요약에 이 키워드 중 하나라도 포함된 기사만 대상 (비우면 전체 허용)
@@ -114,6 +128,17 @@ filters:
     - Nintendo
     - 플레이스테이션
     - PlayStation
-  max_items_per_run: 5 # 실행 1회당 최대 발행 수 (하루 3회 실행)
+    # 논문 / 연구 (arXiv 초록이 걸리도록)
+    - 논문
+    - research
+    - learning
+    - neural
+    - LLM
+    - language model
+    - agent
+    - benchmark
+    - dataset
+    - transformer
+  max_items_per_run: 10 # 실행 1회당 최대 발행 수 (하루 3회 실행)
   max_items_per_source: 1 # 한 소스가 전체를 차지하지 않도록 소스별 상한
   max_age_hours: 24 # 발행된 지 24시간 이내 기사만
