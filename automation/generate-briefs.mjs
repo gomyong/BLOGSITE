@@ -30,7 +30,9 @@ const SEEN_FILE = path.join(__dirname, "briefs-seen.json");
 
 const MODE = process.env.AUTO_BRIEF_MODE === "publish" ? "publish" : "draft";
 const DRY_RUN = process.env.DRY_RUN === "1";
-const MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+// "gemini-flash-latest" 별칭 사용 — 특정 버전이 폐기돼도 항상 현행 flash 모델을 가리켜
+// 자동 요약이 끊기지 않는다. 고정 버전을 쓰려면 GEMINI_MODEL 변수로 덮어쓰면 된다.
+const MODEL = process.env.GEMINI_MODEL || "gemini-flash-latest";
 const CONFIDENCE_THRESHOLD = Number(process.env.CONFIDENCE_THRESHOLD || "0.7");
 const API_KEY = process.env.GEMINI_API_KEY;
 
