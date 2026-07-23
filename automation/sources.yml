@@ -55,6 +55,20 @@ sources:
     tags: [Game]
     lang: ko
 
+  # ── 과학 (검증용 후보, dry-run 후 작동하는 것만 유지) ──
+  - name: "TEST Science.org A"
+    feed: https://www.science.org/rss/current.xml
+    tags: [과학]
+    lang: en
+  - name: "TEST Science.org B"
+    feed: https://www.science.org/action/showFeed?type=etoc&feed=rss&jc=science
+    tags: [과학]
+    lang: en
+  - name: "TEST Science.org C"
+    feed: https://www.science.org/rss/news_current.rss
+    tags: [과학]
+    lang: en
+
   # ── 오픈액세스 논문 (arXiv, 초록 기준 요약) ──
   - name: arXiv AI
     feed: https://rss.arxiv.org/rss/cs.AI
