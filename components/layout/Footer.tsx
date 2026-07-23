@@ -19,6 +19,7 @@ const columns = [
   {
     title: "Meta",
     links: [
+      { href: "/privacy", label: "Privacy" },
       { href: "/sitemap.xml", label: "Sitemap" },
       { href: "/studio", label: "Studio" },
     ],
