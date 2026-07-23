@@ -60,13 +60,9 @@ export default function Footer() {
             </div>
           ))}
         </div>
-        <div className="mt-xl flex flex-col justify-between gap-xs border-t border-outline-variant pt-md sm:flex-row sm:items-center">
+        <div className="mt-xl border-t border-outline-variant pt-md">
           <span className="font-label text-label-sm text-on-surface-variant">
-            © {new Date().getFullYear()} {siteConfig.name}. 정밀하게
-            구축되었습니다.
-          </span>
-          <span className="font-label text-label-sm uppercase text-on-surface-variant">
-            Built with Next.js · MDX · Vercel
+            © {new Date().getFullYear()} {siteConfig.name}
           </span>
         </div>
       </div>
