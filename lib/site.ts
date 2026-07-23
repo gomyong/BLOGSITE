@@ -23,7 +23,9 @@ export const siteConfig = {
   googleVerification:
     process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION ||
     "3r4KXjoqb3WCF2nSANwmHQpkgeb2FlObwE02o3IFHTc",
-  naverVerification: process.env.NEXT_PUBLIC_NAVER_VERIFICATION || "",
+  naverVerification:
+    process.env.NEXT_PUBLIC_NAVER_VERIFICATION ||
+    "590e31ed39d53598914bb686a0c88f59e6bb64b2",
   /** AEO/구조화 데이터용 조직 로고 (기본은 자동 생성 OG 이미지) */
   logo: "/opengraph-image",
   /** 소유 SNS·프로필 URL — 채우면 Organization schema의 sameAs로 연결됨 */
