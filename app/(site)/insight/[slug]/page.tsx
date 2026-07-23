@@ -7,6 +7,7 @@ import { getAdjacentInsights, getInsightBySlug, getInsights } from "@/lib/mdx";
 import { getProductsForArticle } from "@/lib/products";
 import MarkdownContent from "@/components/mdx/MarkdownContent";
 import ReadingProgress from "@/components/insight/ReadingProgress";
+import CopyAttribution from "@/components/insight/CopyAttribution";
 import ProductCard from "@/components/shop/ProductCard";
 import { formatDate } from "@/lib/utils";
 import { siteConfig } from "@/lib/site";
@@ -133,9 +134,14 @@ export default async function InsightPage({ params }: PageProps) {
             </div>
           </header>
 
-          <div className="prose py-lg">
-            <MarkdownContent source={insight.content} />
-          </div>
+          <CopyAttribution
+            title={insight.title}
+            url={`${siteConfig.url}/insight/${slug}`}
+          >
+            <div className="prose py-lg">
+              <MarkdownContent source={insight.content} />
+            </div>
+          </CopyAttribution>
 
           {insight.tags.length > 0 && (
             <div className="flex flex-wrap gap-xs">
