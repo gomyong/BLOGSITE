@@ -30,9 +30,9 @@ const SEEN_FILE = path.join(__dirname, "briefs-seen.json");
 
 const MODE = process.env.AUTO_BRIEF_MODE === "publish" ? "publish" : "draft";
 const DRY_RUN = process.env.DRY_RUN === "1";
-// "gemini-flash-latest" 별칭 사용 — 특정 버전이 폐기돼도 항상 현행 flash 모델을 가리켜
-// 자동 요약이 끊기지 않는다. 고정 버전을 쓰려면 GEMINI_MODEL 변수로 덮어쓰면 된다.
-const MODEL = process.env.GEMINI_MODEL || "gemini-flash-latest";
+// gemini-2.0-flash — 무료 등급 할당량이 넉넉한 안정(GA) 모델. 이 작업(짧은 요약)에
+// 충분하며 rate limit 여유가 크다. 다른 모델을 쓰려면 GEMINI_MODEL 변수로 덮어쓴다.
+const MODEL = process.env.GEMINI_MODEL || "gemini-2.0-flash";
 const CONFIDENCE_THRESHOLD = Number(process.env.CONFIDENCE_THRESHOLD || "0.7");
 const API_KEY = process.env.GEMINI_API_KEY;
 
@@ -40,6 +40,8 @@ if (!API_KEY && !DRY_RUN) {
   console.error("✗ GEMINI_API_KEY 환경변수가 없습니다.");
   process.exit(1);
 }
+
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 /** URL 정규화 — 쿼리/프래그먼트/트레일링 슬래시 제거 후 해시 */
 function urlKey(url) {
@@ -116,11 +118,19 @@ JSON 형식으로만 답하세요: { "summary": string, "tags": string[], "confi
     },
   };
 
-  const res = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
+  // 요청 실행 — 429(rate limit)면 백오프 후 재시도.
+  let res;
+  for (let attempt = 0; ; attempt++) {
+    res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    if (res.status !== 429 || attempt >= 2) break;
+    const waitMs = 20000 * (attempt + 1); // 20s, 40s
+    console.warn(`  … Gemini 429(rate limit) — ${waitMs / 1000}초 대기 후 재시도`);
+    await sleep(waitMs);
+  }
   if (!res.ok) {
     const detail = await res.text().catch(() => "");
     throw new Error(`Gemini ${res.status}: ${detail.slice(0, 200)}`);
@@ -219,7 +229,10 @@ async function main() {
   const newlySeen = [];
   let published = 0;
 
-  for (const c of toProcess) {
+  for (let i = 0; i < toProcess.length; i++) {
+    const c = toProcess[i];
+    // 분당 요청 한도(rate limit)를 넘지 않도록 요청 사이에 간격을 둔다.
+    if (i > 0 && API_KEY) await sleep(4000);
     console.log(`\n· [${c.source.name}] ${c.title}`);
     let result;
     try {

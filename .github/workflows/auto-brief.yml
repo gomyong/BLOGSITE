@@ -32,6 +32,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # push 전 rebase가 안전하게 되도록 전체 히스토리를 받아온다.
+          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
@@ -63,5 +66,10 @@ jobs:
           else
             COUNT="${{ steps.gen.outputs.published }}"
             git commit -m "bot: publish ${COUNT} brief(s) [$(date -u +%Y-%m-%dT%H:%MZ)]"
-            git push
+            # 실행 도중 main이 갱신됐을 수 있으므로 rebase 후 push, 실패 시 재시도.
+            for i in 1 2 3 4 5; do
+              git pull --rebase origin main && git push && exit 0
+              echo "push 재시도 ${i}..."; sleep 5
+            done
+            echo "push 최종 실패"; exit 1
           fi
