@@ -55,12 +55,6 @@ sources:
     tags: [Game]
     lang: ko
 
-  # ── 과학 ──
-  - name: 동아사이언스
-    feed: https://www.dongascience.com/rss.php
-    tags: [과학]
-    lang: ko
-
   # ── 오픈액세스 논문 (arXiv, 초록 기준 요약) ──
   - name: arXiv AI
     feed: https://rss.arxiv.org/rss/cs.AI

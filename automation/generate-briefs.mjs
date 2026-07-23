@@ -30,9 +30,9 @@ const SEEN_FILE = path.join(__dirname, "briefs-seen.json");
 
 const MODE = process.env.AUTO_BRIEF_MODE === "publish" ? "publish" : "draft";
 const DRY_RUN = process.env.DRY_RUN === "1";
-// gemini-2.0-flash — 무료 등급 할당량이 넉넉한 안정(GA) 모델. 이 작업(짧은 요약)에
-// 충분하며 rate limit 여유가 크다. 다른 모델을 쓰려면 GEMINI_MODEL 변수로 덮어쓴다.
-const MODEL = process.env.GEMINI_MODEL || "gemini-2.0-flash";
+// "gemini-flash-latest" 별칭 — 항상 현행 flash 모델을 가리켜 특정 버전이 폐기돼도
+// 끊기지 않는다. (고정 버전을 쓰려면 GEMINI_MODEL 변수로 덮어쓴다.)
+const MODEL = process.env.GEMINI_MODEL || "gemini-flash-latest";
 const CONFIDENCE_THRESHOLD = Number(process.env.CONFIDENCE_THRESHOLD || "0.7");
 const API_KEY = process.env.GEMINI_API_KEY;
 
@@ -229,7 +229,7 @@ async function main() {
   const newlySeen = [];
   let published = 0;
 
-  let quotaBlocked = 0; // 연속 429(할당량 초과) 횟수
+  let consecutiveFail = 0; // 연속 요약 실패 횟수 (할당량/모델 오류 등)
   for (let i = 0; i < toProcess.length; i++) {
     const c = toProcess[i];
     // 분당 요청 한도(rate limit)를 넘지 않도록 요청 사이에 간격을 둔다.
@@ -246,12 +246,12 @@ async function main() {
               sourceName: c.source.name,
               lang: c.source.lang || "ko",
             });
-      quotaBlocked = 0;
+      consecutiveFail = 0;
     } catch (e) {
       console.warn(`  ⚠ 요약 실패: ${e.message} → 스킵 (다음 실행에서 재시도)`);
-      // 일일 할당량이 소진되면 남은 후보도 모두 429이므로 조기 종료해 시간을 아낀다.
-      if (String(e.message).includes("429") && ++quotaBlocked >= 3) {
-        console.warn("⚠ 연속 429(할당량 초과) — 이번 실행 조기 종료");
+      // 크레딧 소진·모델 오류 등 시스템 문제면 남은 후보도 전부 실패하므로 조기 종료.
+      if (++consecutiveFail >= 3) {
+        console.warn("⚠ 연속 3회 요약 실패 — 이번 실행 조기 종료");
         break;
       }
       continue; // seen에 넣지 않음 → 다음 실행 재시도
