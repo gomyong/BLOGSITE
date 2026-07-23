@@ -55,6 +55,12 @@ sources:
     tags: [Game]
     lang: ko
 
+  # ── 과학 ──
+  - name: Science
+    feed: https://www.science.org/rss/current.xml
+    tags: [과학]
+    lang: en
+
   # ── 오픈액세스 논문 (arXiv, 초록 기준 요약) ──
   - name: arXiv AI
     feed: https://rss.arxiv.org/rss/cs.AI
