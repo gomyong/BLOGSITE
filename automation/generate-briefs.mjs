@@ -30,7 +30,9 @@ const SEEN_FILE = path.join(__dirname, "briefs-seen.json");
 
 const MODE = process.env.AUTO_BRIEF_MODE === "publish" ? "publish" : "draft";
 const DRY_RUN = process.env.DRY_RUN === "1";
-const MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+// "gemini-flash-latest" 별칭 사용 — 특정 버전이 폐기돼도 항상 현행 flash 모델을 가리켜
+// 자동 요약이 끊기지 않는다. 고정 버전을 쓰려면 GEMINI_MODEL 변수로 덮어쓰면 된다.
+const MODEL = process.env.GEMINI_MODEL || "gemini-flash-latest";
 const CONFIDENCE_THRESHOLD = Number(process.env.CONFIDENCE_THRESHOLD || "0.7");
 const API_KEY = process.env.GEMINI_API_KEY;
 
@@ -163,22 +165,6 @@ function writeBrief({ iso, dateStr, slug, tags, link, source, summary, draft }) 
 }
 
 async function main() {
-  // [임시 진단] 이 API 키로 generateContent 가능한 모델 목록 출력 후 확인되면 제거
-  if (API_KEY) {
-    try {
-      const mres = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models?key=${API_KEY}&pageSize=200`
-      );
-      const mjson = await mres.json();
-      const names = (mjson.models || [])
-        .filter((m) => (m.supportedGenerationMethods || []).includes("generateContent"))
-        .map((m) => m.name);
-      console.log("★ 사용 가능 모델:", JSON.stringify(names));
-    } catch (e) {
-      console.log("★ 모델 목록 조회 실패:", e.message);
-    }
-  }
-
   const cfg = yaml.load(fs.readFileSync(SOURCES_FILE, "utf-8"));
   const filters = cfg.filters || {};
   const includeKw = (filters.include_keywords || []).map((k) => k.toLowerCase());
