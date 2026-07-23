@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { siteConfig } from "@/lib/site";
 import "./globals.css";
 
-// 검색엔진 소유권 확인 — 환경변수가 있을 때만 태그를 넣는다.
-const googleVerification = process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION;
-const naverVerification = process.env.NEXT_PUBLIC_NAVER_VERIFICATION;
+// 검색엔진 소유권 확인 — 값이 있을 때만 태그를 넣는다. (siteConfig에 기본값 포함)
+const googleVerification = siteConfig.googleVerification;
+const naverVerification = siteConfig.naverVerification;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
