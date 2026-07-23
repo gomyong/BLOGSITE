@@ -9,6 +9,37 @@
 #   auto_publish: (선택) true면 초안이 아니라 바로 발행 (Phase 2용, 기본 false)
 
 sources:
+  # ── 빅테크 / AI 기업 공식 블로그 (영문 → 한국어 요약) ──
+  - name: Google 블로그
+    feed: https://blog.google/rss/
+    tags: [Tech, Google]
+    lang: en
+  - name: Google DeepMind
+    feed: https://deepmind.google/blog/rss.xml
+    tags: [AI, Google]
+    lang: en
+  - name: X (문샷 팩토리)
+    feed: https://blog.x.company/feed
+    tags: [Tech, Moonshot]
+    lang: en
+  - name: Anthropic
+    feed: https://www.anthropic.com/rss.xml
+    tags: [AI, Anthropic]
+    lang: en
+  - name: OpenAI
+    feed: https://openai.com/news/rss.xml
+    tags: [AI, OpenAI]
+    lang: en
+  - name: Microsoft 블로그
+    feed: https://blogs.microsoft.com/feed/
+    tags: [Tech, Microsoft]
+    lang: en
+  - name: Apple 뉴스룸
+    feed: https://www.apple.com/newsroom/rss-feed.rss
+    tags: [Tech, Apple]
+    lang: en
+
+  # ── 테크 미디어 ──
   - name: TechCrunch
     feed: https://techcrunch.com/feed/
     tags: [Tech News]
@@ -17,30 +48,84 @@ sources:
     feed: https://www.theverge.com/rss/index.xml
     tags: [Tech News]
     lang: en
-  - name: 지디넷코리아
-    feed: https://zdnet.co.kr/news/news_xml.asp
-    tags: [Korea, Tech News]
+
+  # ── 브랜드 / 디자인 / 컬처 ──
+  - name: Hypebeast
+    feed: https://hypebeast.com/feed
+    tags: [Brand, Culture]
+    lang: en
+  - name: Designboom
+    feed: https://www.designboom.com/feed/
+    tags: [Design]
+    lang: en
+  - name: 아이즈매거진
+    feed: https://www.eyesmag.com/rss
+    tags: [Brand, Culture]
+    lang: ko
+  - name: 루리웹 게임뉴스
+    feed: https://bbs.ruliweb.com/news/rss
+    tags: [Game]
     lang: ko
 
 # 필터 — 관심 주제와 수집량 제어
 filters:
   # 제목/요약에 이 키워드 중 하나라도 포함된 기사만 대상 (비우면 전체 허용)
   include_keywords:
+    # 테크 / AI / 기업
     - AI
     - 인공지능
     - 반도체
-    - 스타트업
-    - 브랜드
-    - 플랫폼
-    - 커머스
-    - 애플
-    - 구글
-    - 삼성
-    - OpenAI
-    - Google
-    - Apple
     - chip
+    - 스타트업
     - startup
-  max_items_per_run: 3 # 실행 1회당 최대 발행 수
+    - 플랫폼
+    - platform
+    - 커머스
+    - commerce
+    - 애플
+    - Apple
+    - 구글
+    - Google
+    - 삼성
+    - Samsung
+    - OpenAI
+    - Anthropic
+    - 앤트로픽
+    - Microsoft
+    - 메타
+    - Meta
+    - 엔비디아
+    - Nvidia
+    - Gemini
+    - ChatGPT
+    # 브랜드 / 디자인 / 컬처
+    - 브랜드
+    - brand
+    - 디자인
+    - design
+    - 패션
+    - fashion
+    - 컬래버
+    - 협업
+    - collab
+    - 아트
+    - art
+    - 전시
+    - exhibition
+    - 건축
+    - architecture
+    - 가구
+    - furniture
+    - 스니커
+    - sneaker
+    # 게임
+    - 게임
+    - game
+    - 콘솔
+    - 닌텐도
+    - Nintendo
+    - 플레이스테이션
+    - PlayStation
+  max_items_per_run: 5 # 실행 1회당 최대 발행 수 (하루 3회 실행)
   max_items_per_source: 1 # 한 소스가 전체를 차지하지 않도록 소스별 상한
   max_age_hours: 24 # 발행된 지 24시간 이내 기사만
