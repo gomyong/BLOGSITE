@@ -87,6 +87,9 @@ async function summarize({ title, snippet, sourceName, lang }) {
 - 아래 예시의 담백한 톤을 따를 것.
 - 논문(Paper)인 경우, 핵심 기여와 결과를 중심으로 쉽게 풀어서 요약할 것.
 - 정보가 부실해 신뢰할 수 있는 요약이 어려우면 confidence를 낮게(0.5 미만) 매길 것.
+- 요약/발췌가 뉴스 기사가 아니라 AI 모델·데이터셋의 메타데이터(태스크, 다운로드 수,
+  태그 등)인 경우, 그 정보만 근거로 "어떤 모델/데이터셋이고 왜 주목할 만한지"를
+  소개하는 톤으로 작성할 것. 메타데이터에 없는 성능·벤치마크 수치는 지어내지 말 것.
 - tags는 1~3개, 영문 또는 한국어 짧은 키워드.
 
 # 톤 예시 (문체는 이렇게 '-합니다'로 통일)
@@ -176,6 +179,43 @@ function writeBrief({ iso, dateStr, slug, tags, link, source, summary, draft }) 
   console.log(`  ✓ wrote ${path.relative(REPO_ROOT, file)}${draft ? " (draft)" : ""}`);
 }
 
+/**
+ * Hugging Face Hub 공식 API에서 모델/데이터셋 목록을 가져와 RSS 아이템과 같은
+ * 형태({ title, link, snippet, pubDate })로 변환한다. (RSS 아님, 공식 문서화 API —
+ * docs/PRD-brief-automation.md 7장 참조)
+ */
+async function fetchHuggingFaceItems(src) {
+  const res = await fetch(src.api, {
+    headers: {
+      Accept: "application/json",
+      "User-Agent": "blogsite-auto-brief/1.0 (+https://github.com/gomyong/BLOGSITE)",
+    },
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const list = await res.json();
+  const base = src.kind === "dataset" ? "https://huggingface.co/datasets" : "https://huggingface.co";
+
+  return (Array.isArray(list) ? list : [])
+    .map((m) => {
+      const id = m.id || m.modelId;
+      if (!id) return null;
+      const facts = [];
+      if (m.pipeline_tag) facts.push(`태스크: ${m.pipeline_tag}`);
+      if (m.library_name) facts.push(`라이브러리: ${m.library_name}`);
+      if (typeof m.downloads === "number") facts.push(`다운로드: ${m.downloads.toLocaleString()}`);
+      if (typeof m.likes === "number") facts.push(`좋아요: ${m.likes}`);
+      if (Array.isArray(m.tags) && m.tags.length) facts.push(`태그: ${m.tags.slice(0, 8).join(", ")}`);
+      return {
+        title: id,
+        link: `${base}/${id}`,
+        snippet: facts.join(" · "),
+        // trending 정렬은 최신성과 무관하므로 pubDate를 비워 기간 필터(max_age_hours)를 건너뛴다.
+        pubDate: src.newest ? m.createdAt || m.lastModified || null : null,
+      };
+    })
+    .filter(Boolean);
+}
+
 async function main() {
   const cfg = yaml.load(fs.readFileSync(SOURCES_FILE, "utf-8"));
   const filters = cfg.filters || {};
@@ -190,36 +230,47 @@ async function main() {
   const parser = new Parser({ timeout: 15000 });
   const now = Date.now();
   const candidates = [];
+  const pickedThisRun = new Set(); // 같은 실행 내 소스 간(예: 트렌딩/신규) 중복 방지
 
   for (const src of cfg.sources || []) {
     let picked = 0;
-    let feed;
+    let items;
     try {
-      feed = await parser.parseURL(src.feed);
+      if (src.type === "huggingface") {
+        items = await fetchHuggingFaceItems(src);
+      } else {
+        const feed = await parser.parseURL(src.feed);
+        items = (feed.items || []).map((item) => ({
+          title: item.title || "",
+          link: item.link,
+          snippet: (item.contentSnippet || item.content || "").replace(/\s+/g, " ").slice(0, 600),
+          pubDate: item.isoDate || item.pubDate,
+        }));
+      }
     } catch (e) {
-      console.warn(`⚠ 피드 실패 [${src.name}]: ${e.message}`);
+      console.warn(`⚠ 소스 실패 [${src.name}]: ${e.message}`);
       continue;
     }
-    for (const item of feed.items || []) {
+    for (const item of items) {
       if (picked >= maxPerSource) break;
       const link = item.link;
       if (!link) continue;
       const k = urlKey(link);
-      if (seen.has(k)) continue;
+      if (seen.has(k) || pickedThisRun.has(k)) continue;
 
-      const pub = item.isoDate || item.pubDate;
-      if (pub && now - new Date(pub).getTime() > maxAgeMs) continue;
+      if (item.pubDate && now - new Date(item.pubDate).getTime() > maxAgeMs) continue;
 
-      const hay = `${item.title || ""} ${item.contentSnippet || item.content || ""}`.toLowerCase();
+      const hay = `${item.title} ${item.snippet}`.toLowerCase();
       if (includeKw.length && !includeKw.some((kw) => hay.includes(kw))) continue;
 
       candidates.push({
         k,
         link,
-        title: item.title || "",
-        snippet: (item.contentSnippet || item.content || "").replace(/\s+/g, " ").slice(0, 600),
+        title: item.title,
+        snippet: item.snippet.slice(0, 600),
         source: src,
       });
+      pickedThisRun.add(k);
       picked++;
     }
   }
