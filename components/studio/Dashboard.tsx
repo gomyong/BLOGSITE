@@ -111,19 +111,41 @@ export default function Dashboard() {
     else alert("발행에 실패했습니다.");
   }
 
+  /**
+   * 여러 글을 동시에(Promise.allSettled 등으로) 삭제/발행하면 GitHub Contents API가
+   * 같은 브랜치에 동시에 여러 커밋을 만들려다 ref 갱신 경합으로 일부 요청을
+   * 거부한다(Auto-Brief 파이프라인에서 겪었던 "push 거부"와 같은 종류의 문제,
+   * 커밋 9031e24 참조). 그래서 한 번에 하나씩 순차 처리한다.
+   */
+  async function runSequentially(
+    targets: PostItem[],
+    request: (post: PostItem) => Promise<Response>
+  ) {
+    const failures: string[] = [];
+    for (const post of targets) {
+      try {
+        const res = await request(post);
+        if (!res.ok) {
+          const detail = await res.json().catch(() => null);
+          failures.push(`${post.title}: ${detail?.error ?? res.status}`);
+        }
+      } catch (e) {
+        failures.push(`${post.title}: ${e instanceof Error ? e.message : "네트워크 오류"}`);
+      }
+    }
+    return failures;
+  }
+
   async function handleBulkDelete(items: PostItem[]) {
     const targets = items.filter((i) => selected.has(keyOf(i)));
     if (targets.length === 0) return;
     if (!confirm(`선택한 ${targets.length}개 글을 삭제할까요? 되돌릴 수 없습니다.`)) return;
-    const results = await Promise.allSettled(
-      targets.map((post) =>
-        fetch(`/api/admin/posts/${post.type}/${post.slug}`, { method: "DELETE" })
-      )
+    const failures = await runSequentially(targets, (post) =>
+      fetch(`/api/admin/posts/${post.type}/${post.slug}`, { method: "DELETE" })
     );
-    const failed = results.filter(
-      (r) => r.status === "rejected" || !r.value.ok
-    ).length;
-    if (failed > 0) alert(`${failed}개 삭제에 실패했습니다.`);
+    if (failures.length > 0) {
+      alert(`${failures.length}개 삭제에 실패했습니다.\n\n${failures.join("\n")}`);
+    }
     deselect(targets);
     load();
   }
@@ -135,19 +157,16 @@ export default function Dashboard() {
       return;
     }
     if (!confirm(`선택한 초안 ${targets.length}개를 발행할까요?`)) return;
-    const results = await Promise.allSettled(
-      targets.map((post) =>
-        fetch(`/api/admin/posts/${post.type}/${post.slug}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ action: "publish" }),
-        })
-      )
+    const failures = await runSequentially(targets, (post) =>
+      fetch(`/api/admin/posts/${post.type}/${post.slug}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "publish" }),
+      })
     );
-    const failed = results.filter(
-      (r) => r.status === "rejected" || !r.value.ok
-    ).length;
-    if (failed > 0) alert(`${failed}개 발행에 실패했습니다.`);
+    if (failures.length > 0) {
+      alert(`${failures.length}개 발행에 실패했습니다.\n\n${failures.join("\n")}`);
+    }
     deselect(targets);
     load();
   }
