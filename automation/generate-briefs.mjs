@@ -30,9 +30,11 @@ const SEEN_FILE = path.join(__dirname, "briefs-seen.json");
 
 const MODE = process.env.AUTO_BRIEF_MODE === "publish" ? "publish" : "draft";
 const DRY_RUN = process.env.DRY_RUN === "1";
-// "gemini-flash-latest" 별칭 — 항상 현행 flash 모델을 가리켜 특정 버전이 폐기돼도
-// 끊기지 않는다. (고정 버전을 쓰려면 GEMINI_MODEL 변수로 덮어쓴다.)
-const MODEL = process.env.GEMINI_MODEL || "gemini-flash-latest";
+// "gemini-flash-lite-latest" 별칭 — 항상 현행 flash-lite 모델을 가리켜 특정
+// 버전이 폐기돼도 끊기지 않는다. (고정 버전을 쓰려면 GEMINI_MODEL 변수로 덮어쓴다.)
+// 2~4문장 단신 요약은 가벼운 작업이라 상위 Flash 모델이 필요 없고, Flash-Lite가
+// 입출력 단가 모두 더 저렴하다 — 상세 근거는 automation/README.md "비용" 절 참조.
+const MODEL = process.env.GEMINI_MODEL || "gemini-flash-lite-latest";
 const CONFIDENCE_THRESHOLD = Number(process.env.CONFIDENCE_THRESHOLD || "0.7");
 const API_KEY = process.env.GEMINI_API_KEY;
 
@@ -108,6 +110,10 @@ JSON 형식으로만 답하세요: { "summary": string, "tags": string[], "confi
     contents: [{ parts: [{ text: prompt }] }],
     generationConfig: {
       temperature: 0.4,
+      // 2~4문장 단신 요약에는 멀티스텝 추론이 필요 없다. thinkingBudget을 0으로
+      // 두지 않으면 Gemini 2.5+ Flash 계열이 기본으로 "생각" 토큰을 생성하는데,
+      // 이 토큰도 출력 토큰 단가로 과금되어 실제 요약 분량보다 비용이 훨씬 커진다.
+      thinkingConfig: { thinkingBudget: 0 },
       responseMimeType: "application/json",
       responseSchema: {
         type: "OBJECT",
