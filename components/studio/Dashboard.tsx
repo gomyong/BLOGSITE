@@ -23,6 +23,11 @@ interface PostItem {
   category: string;
   draft: boolean;
   featured: boolean;
+  content?: string; // 브리프만 포함 (전체 내용을 목록에서 바로 보여주기 위함)
+}
+
+function keyOf(post: Pick<PostItem, "type" | "slug">) {
+  return `${post.type}-${post.slug}`;
 }
 
 export default function Dashboard() {
@@ -32,6 +37,7 @@ export default function Dashboard() {
   const [storage, setStorage] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [selected, setSelected] = useState<Set<string>>(new Set());
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -55,6 +61,36 @@ export default function Dashboard() {
     load();
   }, [load]);
 
+  function toggleOne(post: PostItem) {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      const k = keyOf(post);
+      if (next.has(k)) next.delete(k);
+      else next.add(k);
+      return next;
+    });
+  }
+
+  function toggleAll(items: PostItem[]) {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      const allSelected = items.length > 0 && items.every((i) => next.has(keyOf(i)));
+      for (const i of items) {
+        if (allSelected) next.delete(keyOf(i));
+        else next.add(keyOf(i));
+      }
+      return next;
+    });
+  }
+
+  function deselect(items: PostItem[]) {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      items.forEach((i) => next.delete(keyOf(i)));
+      return next;
+    });
+  }
+
   async function handleDelete(post: PostItem) {
     if (!confirm(`"${post.title}" 글을 삭제할까요? 되돌릴 수 없습니다.`)) return;
     const res = await fetch(`/api/admin/posts/${post.type}/${post.slug}`, {
@@ -75,9 +111,99 @@ export default function Dashboard() {
     else alert("발행에 실패했습니다.");
   }
 
+  async function handleBulkDelete(items: PostItem[]) {
+    const targets = items.filter((i) => selected.has(keyOf(i)));
+    if (targets.length === 0) return;
+    if (!confirm(`선택한 ${targets.length}개 글을 삭제할까요? 되돌릴 수 없습니다.`)) return;
+    const results = await Promise.allSettled(
+      targets.map((post) =>
+        fetch(`/api/admin/posts/${post.type}/${post.slug}`, { method: "DELETE" })
+      )
+    );
+    const failed = results.filter(
+      (r) => r.status === "rejected" || !r.value.ok
+    ).length;
+    if (failed > 0) alert(`${failed}개 삭제에 실패했습니다.`);
+    deselect(targets);
+    load();
+  }
+
+  async function handleBulkPublish(items: PostItem[]) {
+    const targets = items.filter((i) => selected.has(keyOf(i)) && i.draft);
+    if (targets.length === 0) {
+      alert("선택한 항목 중 초안이 없습니다.");
+      return;
+    }
+    if (!confirm(`선택한 초안 ${targets.length}개를 발행할까요?`)) return;
+    const results = await Promise.allSettled(
+      targets.map((post) =>
+        fetch(`/api/admin/posts/${post.type}/${post.slug}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "publish" }),
+        })
+      )
+    );
+    const failed = results.filter(
+      (r) => r.status === "rejected" || !r.value.ok
+    ).length;
+    if (failed > 0) alert(`${failed}개 발행에 실패했습니다.`);
+    deselect(targets);
+    load();
+  }
+
   async function handleLogout() {
     await fetch("/api/admin/logout", { method: "POST" });
     router.refresh();
+  }
+
+  function renderListHeader(items: PostItem[]) {
+    const selectedItems = items.filter((i) => selected.has(keyOf(i)));
+    const draftCount = selectedItems.filter((i) => i.draft).length;
+    return (
+      <div className="mb-xs flex flex-wrap items-center gap-sm">
+        <label className="flex items-center gap-xs font-label text-label-sm text-on-surface-variant">
+          <input
+            type="checkbox"
+            checked={items.length > 0 && items.every((i) => selected.has(keyOf(i)))}
+            onChange={() => toggleAll(items)}
+            disabled={items.length === 0}
+            className="h-4 w-4 accent-primary"
+          />
+          전체 선택
+        </label>
+        {selectedItems.length > 0 && (
+          <div className="flex flex-wrap items-center gap-sm border border-outline-variant bg-surface-container-low px-sm py-[3px]">
+            <span className="font-label text-label-sm text-on-surface-variant">
+              {selectedItems.length}개 선택됨
+            </span>
+            {draftCount > 0 && (
+              <button
+                type="button"
+                onClick={() => handleBulkPublish(items)}
+                className="flex items-center gap-[4px] font-label text-label-sm text-accent hover:underline"
+              >
+                <Send size={13} /> 선택 발행 ({draftCount})
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={() => handleBulkDelete(items)}
+              className="flex items-center gap-[4px] font-label text-label-sm text-error hover:underline"
+            >
+              <Trash2 size={13} /> 선택 삭제
+            </button>
+            <button
+              type="button"
+              onClick={() => deselect(items)}
+              className="font-label text-label-sm text-on-surface-variant hover:underline"
+            >
+              선택 해제
+            </button>
+          </div>
+        )}
+      </div>
+    );
   }
 
   function renderList(items: PostItem[], emptyText: string) {
@@ -90,59 +216,140 @@ export default function Dashboard() {
     }
     return (
       <ul className="divide-y divide-outline-variant border border-outline-variant bg-surface-container-lowest">
-        {items.map((post) => (
-          <li
-            key={`${post.type}-${post.slug}`}
-            className="flex items-center gap-sm px-md py-sm"
-          >
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-xs">
-                {post.draft && (
-                  <span className="bg-surface-container-highest px-xs py-[2px] font-label text-[10px] uppercase text-on-surface-variant">
-                    초안
-                  </span>
-                )}
-                {post.featured && (
-                  <span className="chip !text-[10px]">Featured</span>
-                )}
-                <p className="truncate text-body-md font-semibold text-on-surface">
-                  {post.title}
+        {items.map((post) => {
+          const k = keyOf(post);
+          return (
+            <li key={k} className="flex items-center gap-sm px-md py-sm">
+              <input
+                type="checkbox"
+                checked={selected.has(k)}
+                onChange={() => toggleOne(post)}
+                className="h-4 w-4 shrink-0 accent-primary"
+                aria-label={`${post.title} 선택`}
+              />
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-xs">
+                  {post.draft && (
+                    <span className="bg-surface-container-highest px-xs py-[2px] font-label text-[10px] uppercase text-on-surface-variant">
+                      초안
+                    </span>
+                  )}
+                  {post.featured && (
+                    <span className="chip !text-[10px]">Featured</span>
+                  )}
+                  <p className="truncate text-body-md font-semibold text-on-surface">
+                    {post.title}
+                  </p>
+                </div>
+                <p className="mt-[2px] font-label text-label-sm text-on-surface-variant">
+                  {post.category && `${post.category} · `}
+                  {post.date ? formatDate(post.date.slice(0, 10)) : "날짜 없음"}
+                  {" · "}
+                  {post.slug}
                 </p>
               </div>
-              <p className="mt-[2px] font-label text-label-sm text-on-surface-variant">
-                {post.category && `${post.category} · `}
-                {post.date ? formatDate(post.date.slice(0, 10)) : "날짜 없음"}
-                {" · "}
-                {post.slug}
-              </p>
-            </div>
-            {post.draft && (
+              {post.draft && (
+                <button
+                  type="button"
+                  onClick={() => handlePublish(post)}
+                  className="p-xs text-on-surface-variant transition-colors hover:text-accent"
+                  title="초안 발행"
+                >
+                  <Send size={15} />
+                </button>
+              )}
+              <Link
+                href={`/studio/write?type=${post.type}&slug=${post.slug}`}
+                className="p-xs text-on-surface-variant transition-colors hover:text-primary"
+                title="수정"
+              >
+                <Pencil size={15} />
+              </Link>
               <button
                 type="button"
-                onClick={() => handlePublish(post)}
-                className="p-xs text-on-surface-variant transition-colors hover:text-accent"
-                title="초안 발행"
+                onClick={() => handleDelete(post)}
+                className="p-xs text-on-surface-variant transition-colors hover:text-error"
+                title="삭제"
               >
-                <Send size={15} />
+                <Trash2 size={15} />
               </button>
-            )}
-            <Link
-              href={`/studio/write?type=${post.type}&slug=${post.slug}`}
-              className="p-xs text-on-surface-variant transition-colors hover:text-primary"
-              title="수정"
-            >
-              <Pencil size={15} />
-            </Link>
-            <button
-              type="button"
-              onClick={() => handleDelete(post)}
-              className="p-xs text-on-surface-variant transition-colors hover:text-error"
-              title="삭제"
-            >
-              <Trash2 size={15} />
-            </button>
-          </li>
-        ))}
+            </li>
+          );
+        })}
+      </ul>
+    );
+  }
+
+  /** 브리프는 제목이 없는 짧은 요약이라, 목록에서 전체 내용을 바로 보여준다
+   *  (edit 버튼을 눌러 들어가지 않아도 발행 여부를 판단할 수 있도록). */
+  function renderBriefList(items: PostItem[], emptyText: string) {
+    if (items.length === 0) {
+      return (
+        <p className="border border-dashed border-outline-variant p-md text-center text-body-md text-on-surface-variant">
+          {emptyText}
+        </p>
+      );
+    }
+    return (
+      <ul className="divide-y divide-outline-variant border border-outline-variant bg-surface-container-lowest">
+        {items.map((post) => {
+          const k = keyOf(post);
+          return (
+            <li key={k} className="flex gap-sm px-md py-sm">
+              <input
+                type="checkbox"
+                checked={selected.has(k)}
+                onChange={() => toggleOne(post)}
+                className="mt-[3px] h-4 w-4 shrink-0 accent-primary"
+                aria-label="브리프 선택"
+              />
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-xs">
+                  {post.draft && (
+                    <span className="bg-surface-container-highest px-xs py-[2px] font-label text-[10px] uppercase text-on-surface-variant">
+                      초안
+                    </span>
+                  )}
+                  <p className="font-label text-label-sm text-on-surface-variant">
+                    {post.date ? formatDate(post.date.slice(0, 10)) : "날짜 없음"}
+                    {" · "}
+                    {post.slug}
+                  </p>
+                </div>
+                <p className="mt-xs whitespace-pre-wrap text-body-md leading-[1.7] text-on-surface">
+                  {post.content || post.title}
+                </p>
+              </div>
+              <div className="flex shrink-0 items-start gap-xs">
+                {post.draft && (
+                  <button
+                    type="button"
+                    onClick={() => handlePublish(post)}
+                    className="p-xs text-on-surface-variant transition-colors hover:text-accent"
+                    title="초안 발행"
+                  >
+                    <Send size={15} />
+                  </button>
+                )}
+                <Link
+                  href={`/studio/write?type=${post.type}&slug=${post.slug}`}
+                  className="p-xs text-on-surface-variant transition-colors hover:text-primary"
+                  title="수정"
+                >
+                  <Pencil size={15} />
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => handleDelete(post)}
+                  className="p-xs text-on-surface-variant transition-colors hover:text-error"
+                  title="삭제"
+                >
+                  <Trash2 size={15} />
+                </button>
+              </div>
+            </li>
+          );
+        })}
       </ul>
     );
   }
@@ -225,6 +432,7 @@ export default function Dashboard() {
             <FileText size={13} /> Insights · {insights.length}
           </h2>
           <div className="mt-sm">
+            {insights.length > 0 && renderListHeader(insights)}
             {renderList(insights, "아직 아티클이 없습니다. 첫 글을 작성해 보세요.")}
           </div>
 
@@ -232,7 +440,8 @@ export default function Dashboard() {
             <MessageSquareText size={13} /> Briefs · {briefs.length}
           </h2>
           <div className="mt-sm">
-            {renderList(briefs, "아직 브리프가 없습니다.")}
+            {briefs.length > 0 && renderListHeader(briefs)}
+            {renderBriefList(briefs, "아직 브리프가 없습니다.")}
           </div>
         </>
       )}

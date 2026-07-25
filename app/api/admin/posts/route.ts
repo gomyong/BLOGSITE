@@ -36,6 +36,9 @@ export async function GET() {
           category: (data.category as string) ?? "",
           draft: Boolean(data.draft),
           featured: Boolean(data.featured),
+          // 브리프는 제목 없는 짧은 요약이라 목록에서 바로 전체 본문을 보여준다.
+          // 아티클은 본문이 길어 목록 응답을 무겁게 만들 수 있어 제외한다.
+          ...(type === "brief" ? { content: content.trim() } : {}),
         };
       })
     );
