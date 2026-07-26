@@ -2,8 +2,9 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
+  CheckCircle2,
   FileText,
   Loader2,
   LogOut,
@@ -32,12 +33,24 @@ function keyOf(post: Pick<PostItem, "type" | "slug">) {
 
 export default function Dashboard() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [insights, setInsights] = useState<PostItem[]>([]);
   const [briefs, setBriefs] = useState<PostItem[]>([]);
   const [storage, setStorage] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [justPublished, setJustPublished] = useState(false);
+
+  // 발행 직후 리다이렉트(?published=1)되면 배너를 보여주고 URL을 정리한다.
+  // 이 사이트는 완전 정적(SSG)이라 지금 이 순간 저장은 끝났어도, GitHub 커밋을
+  // Vercel이 다시 빌드해 배포해야 실제 사이트에 반영된다 — 그 지연을 명확히 알려준다.
+  useEffect(() => {
+    if (searchParams.get("published") === "1") {
+      setJustPublished(true);
+      router.replace("/studio");
+    }
+  }, [searchParams, router]);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -396,6 +409,24 @@ export default function Dashboard() {
           <LogOut size={13} /> 로그아웃
         </button>
       </div>
+
+      {justPublished && (
+        <div className="mt-lg flex items-start gap-sm border border-accent/40 bg-accent/10 px-md py-sm text-body-md text-on-surface">
+          <CheckCircle2 size={16} className="mt-[2px] shrink-0 text-accent" />
+          <span>
+            저장됐습니다. {storage === "github"
+              ? "GitHub에 커밋되었고, Vercel이 자동으로 재배포합니다 — 보통 1~2분 뒤 실제 사이트에 반영됩니다. 지금 바로 홈에 안 보여도 정상이니 잠시 후 새로고침해 보세요."
+              : "로컬 모드라 이 서버를 재시작하기 전까지는 로컬 화면에서만 확인됩니다."}
+          </span>
+          <button
+            type="button"
+            onClick={() => setJustPublished(false)}
+            className="ml-auto shrink-0 font-label text-label-sm text-on-surface-variant hover:underline"
+          >
+            닫기
+          </button>
+        </div>
+      )}
 
       <div className="mt-lg grid grid-cols-1 gap-sm sm:grid-cols-2">
         <Link
