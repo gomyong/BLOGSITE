@@ -6,7 +6,6 @@ import { formatDate } from "@/lib/utils";
 
 /**
  * CLIP 스타일 피처드 히어로 — 컬러(accent) 블록 위에 제목, 우측에 컷아웃 이미지.
- * 뒤에 살짝 어긋난 다크 셰이프를 겹쳐 콜라주 느낌을 준다.
  */
 export default function FeaturedHero({ insight }: { insight: InsightMeta }) {
   return (
@@ -36,9 +35,8 @@ export default function FeaturedHero({ insight }: { insight: InsightMeta }) {
           </div>
         </div>
 
-        {/* 이미지 (콜라주 느낌) */}
+        {/* 이미지 */}
         <div className="relative min-h-[240px] md:min-h-[380px]">
-          <div className="absolute inset-4 rotate-2 rounded-xl bg-black/20" />
           <div className="absolute inset-4 overflow-hidden rounded-xl">
             <Image
               src={insight.coverImage}
