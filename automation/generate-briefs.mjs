@@ -54,7 +54,11 @@ function urlKey(url) {
     let s = `${u.host}${u.pathname}`.toLowerCase().replace(/\/$/, "");
     return crypto.createHash("sha1").update(s).digest("hex").slice(0, 16);
   } catch {
-    return crypto.createHash("sha1").update(String(url)).digest("hex").slice(0, 16);
+    return crypto
+      .createHash("sha1")
+      .update(String(url))
+      .digest("hex")
+      .slice(0, 16);
   }
 }
 
@@ -106,46 +110,74 @@ async function summarize({ title, snippet, sourceName, lang }) {
 JSON 형식으로만 답하세요: { "summary": string, "tags": string[], "confidence": number(0~1) }`;
 
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${API_KEY}`;
-  const body = {
+  const responseSchema = {
+    type: "OBJECT",
+    properties: {
+      summary: { type: "STRING" },
+      tags: { type: "ARRAY", items: { type: "STRING" } },
+      confidence: { type: "NUMBER" },
+    },
+    required: ["summary", "tags", "confidence"],
+  };
+
+  // 요청 1회 실행 — 429(rate limit)면 백오프 후 재시도. 그 외 실패는 { ok, status, text }로 반환.
+  async function callGemini(body) {
+    let res;
+    for (let attempt = 0; ; attempt++) {
+      res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      if (res.status !== 429 || attempt >= 2) break;
+      const waitMs = 20000 * (attempt + 1); // 20s, 40s
+      console.warn(
+        `  … Gemini 429(rate limit) — ${waitMs / 1000}초 대기 후 재시도`,
+      );
+      await sleep(waitMs);
+    }
+    if (res.ok) return { ok: true, json: await res.json() };
+    return {
+      ok: false,
+      status: res.status,
+      text: await res.text().catch(() => ""),
+    };
+  }
+
+  // 2~4문장 단신 요약에는 멀티스텝 추론이 필요 없다. thinkingBudget을 0으로 두지
+  // 않으면 Gemini 2.5+ Flash 계열이 기본으로 "생각" 토큰을 생성하는데, 이 토큰도
+  // 출력 토큰 단가로 과금되어 실제 요약 분량보다 비용이 훨씬 커진다. 다만 일부
+  // 모델(별칭이 가리키는 버전에 따라 다름)은 이 필드를 거부(400)하므로, 실패 시
+  // thinkingConfig 없이 한 번 더 시도한다 — 2026-07-25 gemini-flash-lite-latest에서
+  // 이 조합이 400을 유발해 3일간 자동 발행이 전면 중단된 사고 이후 추가된 안전장치.
+  let result = await callGemini({
     contents: [{ parts: [{ text: prompt }] }],
     generationConfig: {
       temperature: 0.4,
-      // 2~4문장 단신 요약에는 멀티스텝 추론이 필요 없다. thinkingBudget을 0으로
-      // 두지 않으면 Gemini 2.5+ Flash 계열이 기본으로 "생각" 토큰을 생성하는데,
-      // 이 토큰도 출력 토큰 단가로 과금되어 실제 요약 분량보다 비용이 훨씬 커진다.
       thinkingConfig: { thinkingBudget: 0 },
       responseMimeType: "application/json",
-      responseSchema: {
-        type: "OBJECT",
-        properties: {
-          summary: { type: "STRING" },
-          tags: { type: "ARRAY", items: { type: "STRING" } },
-          confidence: { type: "NUMBER" },
-        },
-        required: ["summary", "tags", "confidence"],
-      },
+      responseSchema,
     },
-  };
+  });
 
-  // 요청 실행 — 429(rate limit)면 백오프 후 재시도.
-  let res;
-  for (let attempt = 0; ; attempt++) {
-    res = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
+  if (!result.ok && result.status === 400) {
+    console.warn(
+      `  … Gemini 400 (thinkingConfig 포함) — thinkingConfig 없이 재시도`,
+    );
+    result = await callGemini({
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: {
+        temperature: 0.4,
+        responseMimeType: "application/json",
+        responseSchema,
+      },
     });
-    if (res.status !== 429 || attempt >= 2) break;
-    const waitMs = 20000 * (attempt + 1); // 20s, 40s
-    console.warn(`  … Gemini 429(rate limit) — ${waitMs / 1000}초 대기 후 재시도`);
-    await sleep(waitMs);
   }
-  if (!res.ok) {
-    const detail = await res.text().catch(() => "");
-    throw new Error(`Gemini ${res.status}: ${detail.slice(0, 200)}`);
+
+  if (!result.ok) {
+    throw new Error(`Gemini ${result.status}: ${result.text.slice(0, 200)}`);
   }
-  const json = await res.json();
-  const text = json?.candidates?.[0]?.content?.parts?.[0]?.text;
+  const text = result.json?.candidates?.[0]?.content?.parts?.[0]?.text;
   if (!text) throw new Error("Gemini 응답이 비어 있습니다.");
   return JSON.parse(text);
 }
@@ -156,12 +188,24 @@ function validate(result) {
   const len = result.summary.trim().length;
   if (len < 60) return `요약이 너무 짧음(${len}자)`;
   if (len > 320) return `요약이 너무 김(${len}자)`;
-  if (typeof result.confidence !== "number" || result.confidence < CONFIDENCE_THRESHOLD)
+  if (
+    typeof result.confidence !== "number" ||
+    result.confidence < CONFIDENCE_THRESHOLD
+  )
     return `신뢰도 미달(${result.confidence})`;
   return null;
 }
 
-function writeBrief({ iso, dateStr, slug, tags, link, source, summary, draft }) {
+function writeBrief({
+  iso,
+  dateStr,
+  slug,
+  tags,
+  link,
+  source,
+  summary,
+  draft,
+}) {
   const fmTags = `[${tags.map((t) => JSON.stringify(t)).join(", ")}]`;
   const lines = [
     "---",
@@ -182,7 +226,9 @@ function writeBrief({ iso, dateStr, slug, tags, link, source, summary, draft }) 
   }
   fs.mkdirSync(BRIEFS_DIR, { recursive: true });
   fs.writeFileSync(file, mdx);
-  console.log(`  ✓ wrote ${path.relative(REPO_ROOT, file)}${draft ? " (draft)" : ""}`);
+  console.log(
+    `  ✓ wrote ${path.relative(REPO_ROOT, file)}${draft ? " (draft)" : ""}`,
+  );
 }
 
 /**
@@ -194,12 +240,16 @@ async function fetchHuggingFaceItems(src) {
   const res = await fetch(src.api, {
     headers: {
       Accept: "application/json",
-      "User-Agent": "blogsite-auto-brief/1.0 (+https://github.com/gomyong/BLOGSITE)",
+      "User-Agent":
+        "blogsite-auto-brief/1.0 (+https://github.com/gomyong/BLOGSITE)",
     },
   });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const list = await res.json();
-  const base = src.kind === "dataset" ? "https://huggingface.co/datasets" : "https://huggingface.co";
+  const base =
+    src.kind === "dataset"
+      ? "https://huggingface.co/datasets"
+      : "https://huggingface.co";
 
   return (Array.isArray(list) ? list : [])
     .map((m) => {
@@ -208,9 +258,11 @@ async function fetchHuggingFaceItems(src) {
       const facts = [];
       if (m.pipeline_tag) facts.push(`태스크: ${m.pipeline_tag}`);
       if (m.library_name) facts.push(`라이브러리: ${m.library_name}`);
-      if (typeof m.downloads === "number") facts.push(`다운로드: ${m.downloads.toLocaleString()}`);
+      if (typeof m.downloads === "number")
+        facts.push(`다운로드: ${m.downloads.toLocaleString()}`);
       if (typeof m.likes === "number") facts.push(`좋아요: ${m.likes}`);
-      if (Array.isArray(m.tags) && m.tags.length) facts.push(`태그: ${m.tags.slice(0, 8).join(", ")}`);
+      if (Array.isArray(m.tags) && m.tags.length)
+        facts.push(`태그: ${m.tags.slice(0, 8).join(", ")}`);
       return {
         title: id,
         link: `${base}/${id}`,
@@ -225,7 +277,9 @@ async function fetchHuggingFaceItems(src) {
 async function main() {
   const cfg = yaml.load(fs.readFileSync(SOURCES_FILE, "utf-8"));
   const filters = cfg.filters || {};
-  const includeKw = (filters.include_keywords || []).map((k) => k.toLowerCase());
+  const includeKw = (filters.include_keywords || []).map((k) =>
+    k.toLowerCase(),
+  );
   const maxPerRun = filters.max_items_per_run ?? 3;
   const maxPerSource = filters.max_items_per_source ?? 1;
   const maxAgeMs = (filters.max_age_hours ?? 24) * 3600 * 1000;
@@ -249,7 +303,9 @@ async function main() {
         items = (feed.items || []).map((item) => ({
           title: item.title || "",
           link: item.link,
-          snippet: (item.contentSnippet || item.content || "").replace(/\s+/g, " ").slice(0, 600),
+          snippet: (item.contentSnippet || item.content || "")
+            .replace(/\s+/g, " ")
+            .slice(0, 600),
           pubDate: item.isoDate || item.pubDate,
         }));
       }
@@ -264,10 +320,12 @@ async function main() {
       const k = urlKey(link);
       if (seen.has(k) || pickedThisRun.has(k)) continue;
 
-      if (item.pubDate && now - new Date(item.pubDate).getTime() > maxAgeMs) continue;
+      if (item.pubDate && now - new Date(item.pubDate).getTime() > maxAgeMs)
+        continue;
 
       const hay = `${item.title} ${item.snippet}`.toLowerCase();
-      if (includeKw.length && !includeKw.some((kw) => hay.includes(kw))) continue;
+      if (includeKw.length && !includeKw.some((kw) => hay.includes(kw)))
+        continue;
 
       candidates.push({
         k,
@@ -281,7 +339,9 @@ async function main() {
     }
   }
 
-  console.log(`수집 후보: ${candidates.length}건 (모드: ${MODE}${DRY_RUN ? ", dry-run" : ""})`);
+  console.log(
+    `수집 후보: ${candidates.length}건 (모드: ${MODE}${DRY_RUN ? ", dry-run" : ""})`,
+  );
   const toProcess = candidates.slice(0, maxPerRun);
   const newlySeen = [];
   let published = 0;
@@ -322,7 +382,7 @@ async function main() {
     }
 
     const tags = Array.from(
-      new Set([...(c.source.tags || []), ...(result.tags || [])])
+      new Set([...(c.source.tags || []), ...(result.tags || [])]),
     ).slice(0, 3);
     const draft = !(MODE === "publish" && c.source.auto_publish === true);
     const { date: dateStr, iso } = kstDateParts();
@@ -345,11 +405,11 @@ async function main() {
   if (!DRY_RUN && newlySeen.length) {
     const cutoff = Date.now() - 60 * 24 * 3600 * 1000;
     const merged = [...seenData.seen, ...newlySeen].filter(
-      (s) => new Date(s.at).getTime() > cutoff
+      (s) => new Date(s.at).getTime() > cutoff,
     );
     fs.writeFileSync(
       SEEN_FILE,
-      JSON.stringify({ version: 1, seen: merged }, null, 2) + "\n"
+      JSON.stringify({ version: 1, seen: merged }, null, 2) + "\n",
     );
   }
 
