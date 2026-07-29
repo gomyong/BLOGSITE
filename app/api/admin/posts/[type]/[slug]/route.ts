@@ -11,9 +11,12 @@ interface Params {
   params: Promise<{ type: string; slug: string }>;
 }
 
+// Auto-Brief(automation/generate-briefs.mjs)의 slugify()는 매체명의 한글을
+// 그대로 남긴다(예: "Google 블로그" → google-블로그). 여기서 영문/숫자만
+// 허용하면 그렇게 생성된 초안은 조회·발행·삭제가 전부 400으로 막힌다.
 function resolvePath(type: string, slug: string) {
   const dir = DIRS[type as keyof typeof DIRS];
-  if (!dir || !/^[a-z0-9-]+$/.test(slug)) return null;
+  if (!dir || !/^[a-z0-9가-힣-]+$/.test(slug)) return null;
   return `${dir}/${slug}.mdx`;
 }
 
@@ -29,7 +32,10 @@ export async function GET(_request: Request, { params }: Params) {
   }
   const raw = await readFile(filePath);
   if (!raw) {
-    return NextResponse.json({ error: "글을 찾을 수 없습니다." }, { status: 404 });
+    return NextResponse.json(
+      { error: "글을 찾을 수 없습니다." },
+      { status: 404 },
+    );
   }
   const { data, content } = matter(raw);
   return NextResponse.json({ frontmatter: data, content: content.trim() });
@@ -53,12 +59,18 @@ export async function PATCH(request: Request, { params }: Params) {
     /* 본문 없으면 기본 publish */
   }
   if (action !== "publish") {
-    return NextResponse.json({ error: "지원하지 않는 동작입니다." }, { status: 400 });
+    return NextResponse.json(
+      { error: "지원하지 않는 동작입니다." },
+      { status: 400 },
+    );
   }
 
   const raw = await readFile(filePath);
   if (!raw) {
-    return NextResponse.json({ error: "글을 찾을 수 없습니다." }, { status: 404 });
+    return NextResponse.json(
+      { error: "글을 찾을 수 없습니다." },
+      { status: 404 },
+    );
   }
   const { data, content } = matter(raw);
   if (!data.draft) {
