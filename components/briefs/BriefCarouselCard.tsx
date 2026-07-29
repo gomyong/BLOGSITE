@@ -64,7 +64,7 @@ export default function BriefCarouselCard({ briefs }: { briefs: Brief[] }) {
             href={brief.link || "/briefs"}
             target={brief.link ? "_blank" : undefined}
             rel={brief.link ? "noopener noreferrer" : undefined}
-            className="inline-flex items-center gap-1 rounded-full bg-white px-3 py-1.5 text-[12px] font-semibold text-black transition-transform hover:translate-x-0.5"
+            className="inline-flex items-center gap-1 text-[12px] font-semibold text-white underline decoration-white/50 decoration-2 underline-offset-4 transition-opacity hover:opacity-80"
           >
             원문 보러가기 <ArrowUpRight size={13} />
           </a>
