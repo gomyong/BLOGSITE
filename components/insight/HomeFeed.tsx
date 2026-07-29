@@ -7,7 +7,7 @@ import type { InsightMeta } from "@/lib/mdx";
 import { formatDate, cn } from "@/lib/utils";
 
 /** CLIP 스타일 카드 — 라운드 이미지 + pill 태그 + 볼드 제목 */
-function ArticleCard({ insight }: { insight: InsightMeta }) {
+export function ArticleCard({ insight }: { insight: InsightMeta }) {
   return (
     <Link href={`/insight/${insight.slug}`} className="group flex flex-col">
       <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl bg-surface-container-low">
@@ -36,7 +36,7 @@ function ArticleCard({ insight }: { insight: InsightMeta }) {
 export default function HomeFeed({ insights }: { insights: InsightMeta[] }) {
   const categories = useMemo(
     () => ["All", ...Array.from(new Set(insights.map((i) => i.category)))],
-    [insights]
+    [insights],
   );
   const [active, setActive] = useState("All");
   const filtered =
@@ -55,7 +55,7 @@ export default function HomeFeed({ insights }: { insights: InsightMeta[] }) {
               "rounded-full border px-3.5 py-1.5 text-[13px] font-medium transition-colors",
               active === cat
                 ? "border-on-surface bg-on-surface text-surface"
-                : "border-outline-variant text-on-surface-variant hover:border-on-surface hover:text-on-surface"
+                : "border-outline-variant text-on-surface-variant hover:border-on-surface hover:text-on-surface",
             )}
           >
             {cat}
