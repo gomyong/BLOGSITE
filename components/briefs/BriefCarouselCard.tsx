@@ -24,9 +24,9 @@ export default function BriefCarouselCard({ briefs }: { briefs: Brief[] }) {
 
   return (
     <div className="flex flex-col">
-      <div className="relative flex aspect-[4/3] w-full flex-col justify-between overflow-hidden rounded-xl bg-accent p-4">
+      <div className="relative flex aspect-[4/3] w-full flex-col justify-between overflow-hidden rounded-xl bg-surface-container-low p-4">
         <div className="flex items-center justify-between">
-          <span className="chip chip-on-accent w-fit">Brief</span>
+          <span className="chip w-fit">Brief</span>
           {briefs.length > 1 && (
             <div className="flex gap-1">
               {briefs.map((b, i) => (
@@ -34,7 +34,7 @@ export default function BriefCarouselCard({ briefs }: { briefs: Brief[] }) {
                   key={b.slug}
                   className={cn(
                     "h-1.5 w-1.5 rounded-full",
-                    i === index ? "bg-white" : "bg-white/35",
+                    i === index ? "bg-on-surface" : "bg-on-surface/25",
                   )}
                 />
               ))}
@@ -42,7 +42,7 @@ export default function BriefCarouselCard({ briefs }: { briefs: Brief[] }) {
           )}
         </div>
 
-        <p className="line-clamp-5 min-h-0 text-[13.5px] leading-relaxed text-white/95">
+        <p className="line-clamp-5 min-h-0 text-[13.5px] leading-relaxed text-on-surface">
           {brief.content.trim()}
         </p>
 
@@ -52,7 +52,7 @@ export default function BriefCarouselCard({ briefs }: { briefs: Brief[] }) {
               type="button"
               onClick={() => go(-1)}
               aria-label="이전 브리프"
-              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/15 text-white transition-colors hover:bg-white/25"
+              className="bg-on-surface/10 hover:bg-on-surface/15 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-on-surface transition-colors"
             >
               <ChevronLeft size={16} />
             </button>
@@ -64,7 +64,7 @@ export default function BriefCarouselCard({ briefs }: { briefs: Brief[] }) {
             href={brief.link || "/briefs"}
             target={brief.link ? "_blank" : undefined}
             rel={brief.link ? "noopener noreferrer" : undefined}
-            className="inline-flex items-center gap-1 text-[12px] font-semibold text-white underline decoration-white/50 decoration-2 underline-offset-4 transition-opacity hover:opacity-80"
+            className="decoration-on-surface/40 inline-flex items-center gap-1 text-[12px] font-semibold text-on-surface underline decoration-2 underline-offset-4 transition-opacity hover:opacity-70"
           >
             원문 보러가기 <ArrowUpRight size={13} />
           </a>
@@ -74,7 +74,7 @@ export default function BriefCarouselCard({ briefs }: { briefs: Brief[] }) {
               type="button"
               onClick={() => go(1)}
               aria-label="다음 브리프"
-              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/15 text-white transition-colors hover:bg-white/25"
+              className="bg-on-surface/10 hover:bg-on-surface/15 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-on-surface transition-colors"
             >
               <ChevronRight size={16} />
             </button>
